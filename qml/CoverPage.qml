@@ -13,6 +13,7 @@ CoverBackground {
         spacing: Theme.paddingLarge
         Label {
             text: qsTr("Now:")
+            color: Theme.secondaryColor
             font.pixelSize: Theme.fontSizeLarge
         }
         Label {
@@ -22,6 +23,7 @@ CoverBackground {
         }
         Label {
             text: qsTr("Avg.:")
+            color: Theme.secondaryColor
             font.pixelSize: Theme.fontSizeLarge
         }
         Label {
