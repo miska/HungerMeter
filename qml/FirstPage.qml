@@ -56,7 +56,7 @@ Page {
             id: column
             width: parent.width
             height: parent.height
-    
+
             spacing: Theme.paddingLarge
             PageHeader {
                 id: header
