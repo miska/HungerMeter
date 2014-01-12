@@ -27,8 +27,6 @@
 #include <list>
 #include <time.h>
 
-#define CACHE_SIZE 60
-
 struct history {
     float data;
     time_t time;
@@ -40,7 +38,7 @@ public:
     std::list<history> hist;
     explicit Hunger(QObject* parent = 0) : QObject(parent) {}
     ~Hunger() {}
-    Q_INVOKABLE void refresh();
+    Q_INVOKABLE void refresh(int limit);
     Q_INVOKABLE QString avg_text(int number);
 };
 

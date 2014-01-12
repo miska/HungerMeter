@@ -36,7 +36,7 @@ ApplicationWindow
         running: true;
         repeat: true
         onTriggered: {
-            hunger.refresh()
+            hunger.refresh(avg_time)
             interval = 200 * cur_time
         }
     }

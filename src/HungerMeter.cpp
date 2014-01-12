@@ -25,7 +25,7 @@
 
 #include "hunger.h"
 
-void Hunger::refresh() {
+void Hunger::refresh(int limit) {
     FILE *I, *U;
     long u,i;
     history p;
@@ -44,7 +44,7 @@ void Hunger::refresh() {
     p.time = time(NULL);
 
     hist.push_back(p);
-    while((p.time - hist.begin()->time) > CACHE_SIZE)
+    while((p.time - hist.begin()->time) > limit)
         hist.pop_front();
 close:
     fclose(U);
