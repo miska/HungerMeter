@@ -1,0 +1,32 @@
+Hunger Meter
+============
+
+About application
+-----------------
+
+Simple monitor showing current battery consumption. Visible in cover action as
+well, so you can peek to see how battery hungry is your phone at it's current
+state even from running applications (that affect consumption).
+
+It displays two values - current consumption which is last 1s and average which
+is average for last 10s. Via pull down/push up menus you can configure
+different intervals. Settings are not saved so they affect application only
+till it is shut down.
+
+Hunger meter is so far really simple - not much more than HelloWorld, but it
+can be already useful to help you decide whether changes you did to your
+device setup are going to help you get better battery life or not (for example
+which applications doesn't hurt keep running on background and which does).
+
+Binaries
+--------
+
+Binaries are currently available and will be updated at
+https://openrepos.net/node/5041/[OpenRepos]
+
+About the origin
+----------------
+
+This application was written by http://michal.hrusecky.net[Michal Hrušecký] as
+an attempt to play with QML and Sailfish. It's initial purpose is better and
+more useful HelloWord, but it evolved into something useful as well :-)
