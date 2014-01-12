@@ -8,7 +8,7 @@
 void Hunger::refresh() {
     FILE *I, *U;
     long u,i;
-    double p = -0.0;
+    history p;
 
     I = fopen("/sys/class/power_supply/battery/current_now","r");
     if(I == NULL) return;
@@ -20,10 +20,11 @@ void Hunger::refresh() {
     // uA
     if(fscanf(I, "%ld", &i) != 1) goto close;
     // W
-    p = (((double)u)/1000000)*(((double)i)/1000000);
+    p.data = (((double)u)/1000000)*(((double)i)/1000000);
+    p.time = time(NULL);
 
     hist.push_back(p);
-    if(hist.size() > CACHE_SIZE)
+    while((p.time - hist.begin()->time) > CACHE_SIZE)
         hist.pop_front();
 close:
     fclose(U);
@@ -31,35 +32,23 @@ close_i:
     fclose(I);
 }
 
-QString Hunger::current_text(int limit = 10) {
+QString Hunger::avg_text(int limit = 10) {
     static char buff[128];
-    double value = 0.0;
+    float value = 0.0;
     int j = 0;
+    time_t t = time(NULL);
+    if(hist.rbegin()->time != t)
+        t--;
 
     if(!hist.empty()) {
-        for(auto i = hist.rbegin(); (i != hist.rend()) && (j < limit); i++,j++) {
-            value += (*i);
+        for(auto i = hist.rbegin(); (i != hist.rend()) && ((t - i->time) < limit); i++, j++) {
+            value += i->data;
         }
         if(j>0)
             value /= j;
     }
 
-    sprintf(buff,"%.4lf W", value);
-    return QString(buff);
-}
-
-QString Hunger::avg_text() {
-    static char buff[128];
-    double value = 0.0;
-
-    if(! hist.empty()) {
-        for(auto i : hist) {
-            value += i;
-        }
-        value /= hist.size();
-    }
-
-    sprintf(buff,"%.4lf W", value);
+    sprintf(buff,"%.4f W", value);
     return QString(buff);
 }
 

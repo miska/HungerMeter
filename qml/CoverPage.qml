@@ -2,11 +2,17 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 
 CoverBackground {
+    id: coverPage
     Timer {
+        id: pageTimer
         interval: 1000;
         running: true;
         repeat: true
-        onTriggered: { coverText.text = hunger.current_text(10); coverAvgText.text = hunger.avg_text() }
+        onTriggered: {
+            coverCurText.text = hunger.avg_text(app.cur_time)
+            coverAvgText.text = hunger.avg_text(app.avg_time)
+            interval = app.cur_time * 1000
+        }
     }
     Column {
         anchors.centerIn: parent
@@ -17,8 +23,8 @@ CoverBackground {
             font.pixelSize: Theme.fontSizeLarge
         }
         Label {
-            id: coverText
-            text: hunger.current_text(10)
+            id: coverCurText
+            text: ""
             font.pixelSize: Theme.fontSizeExtraLarge
         }
         Label {
@@ -28,7 +34,7 @@ CoverBackground {
         }
         Label {
             id: coverAvgText
-            text: hunger.avg_text()
+            text: ""
             font.pixelSize: Theme.fontSizeExtraLarge
         }
     }
