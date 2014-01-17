@@ -6,7 +6,7 @@
 #         - desktop icon filename must be changed
 #         - desktop filename must be changed
 #         - icon definition filename in desktop file must be changed
-TARGET = HungerMeter
+TARGET = harbour-hungermeter
 
 QMAKE_CXXFLAGS += -std=c++0x
 
@@ -14,12 +14,13 @@ CONFIG += sailfishapp
 
 SOURCES += src/HungerMeter.cpp
 
-OTHER_FILES += qml/HungerMeter.qml \
+OTHER_FILES += \
     qml/CoverPage.qml \
     qml/FirstPage.qml \
-    rpm/HungerMeter.spec \
-    rpm/HungerMeter.yaml \
-    HungerMeter.desktop
+    rpm/harbour-hungermeter.spec \
+    harbour-hungermeter.desktop \
+    rpm/harbour-hungermeter.yaml \
+    qml/harbour-hungermeter.qml
 
 HEADERS += \
     src/hunger.h

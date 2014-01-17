@@ -19,8 +19,11 @@
  ******************************************************************************/
 
 #include <QtQuick>
+#include <QVariant>
+#include <QVariantList>
 #include <sailfishapp.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 
 #include "hunger.h"
@@ -29,6 +32,7 @@ void Hunger::refresh(int limit) {
     FILE *I, *U;
     long u,i;
     history p;
+    static int j;
 
     I = fopen("/sys/class/power_supply/battery/current_now","r");
     if(I == NULL) return;
@@ -43,8 +47,15 @@ void Hunger::refresh(int limit) {
     p.data = (((double)u)/1000000)*(((double)i)/1000000);
     p.time = time(NULL);
 
-    hist.push_back(p);
-    while((p.time - hist.begin()->time) > limit)
+    if(hist.empty() || hist.back().time != p.time) {
+        hist.push_back(p);
+        j=1;
+    } else {
+        hist.back().data = (hist.back().data * ((float)j) + p.data) / ((float)(j+1));
+        j++;
+    }
+
+    while((p.time - hist.begin()->time) > (limit+2))
         hist.pop_front();
 close:
     fclose(U);
@@ -61,15 +72,39 @@ QString Hunger::avg_text(int limit = 10) {
         t--;
 
     if(!hist.empty()) {
-        for(auto i = hist.rbegin(); (i != hist.rend()) && ((t - i->time) < limit); i++, j++) {
+        for(auto i = hist.rbegin(); (i != hist.rend()) && ((t - i->time) < limit); i++) {
+            j++;
             value += i->data;
         }
-        if(j>0)
-            value /= j;
     }
 
-    sprintf(buff,"%.4f W", value);
+    sprintf(buff,"%.4f W", value/((float)std::max(j,1)));
     return QString(buff);
+}
+
+QVariantList Hunger::graph(int limit) {
+    QVariantList ret;
+    time_t t = time(NULL);
+    time_t l_t;
+
+    if(hist.rbegin()->time != t)
+        t--;
+
+    l_t = t;
+
+    if(!hist.empty()) {
+        for(auto i = hist.rbegin(); (i != hist.rend()) && ((t - l_t) < limit); i++) {
+            l_t = i->time;
+            ret.push_front(i->data);
+        }
+    }
+
+    while(t-l_t < limit) {
+        ret.push_front(0.0);
+        l_t --;
+    }
+
+    return ret;
 }
 
 Q_DECL_EXPORT int main(int argc, char *argv[])

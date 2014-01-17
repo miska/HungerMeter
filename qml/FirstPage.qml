@@ -70,6 +70,8 @@ Page {
                 curText.text = hunger.avg_text(app.cur_time)
                 avgText.text = hunger.avg_text(app.avg_time)
                 interval = app.cur_time * 1000
+                canvas.array = hunger.graph(app.avg_time - 1)
+                canvas.requestPaint()
             }
         }
         Column {
@@ -118,6 +120,51 @@ Page {
                     id: avgText
                     text: ""
                     font.pixelSize: Theme.fontSizeExtraLarge
+                }
+            }
+            Row {
+                width: parent.width
+                spacing: parent.spacing
+                Rectangle {
+                    width: 1
+                    color: "transparent"
+                    height: canvas.height
+                }
+                Canvas {
+                    id: canvas
+                    width: parent.width - 2*Theme.paddingLarge
+                    height: column.height - curText.height - avgText.height - header.height - 5*Theme.paddingLarge
+                    function drawLine(ctx,x1,y1,x2,y2) {
+                        ctx.beginPath();
+                        ctx.lineWidth = 3
+                        ctx.moveTo(x1, y1);
+                        ctx.lineTo(x2, y2);
+                        ctx.stroke();
+                        ctx.closePath();
+                    }
+                    function clear(ctx) {
+                        ctx.clearRect(0, 0, width, height);
+                    }
+                    property variant array: [ 0.0, 0.0 ]
+                    onPaint: {
+                        var ctx = getContext("2d")
+                        var step_x = canvas.width / ( array.length -1 )
+                        ctx.save()
+                        clear(ctx)
+                        ctx.strokeStyle = Theme.secondaryColor
+                        ctx.fillStyle = Theme.secondaryColor;
+                        ctx.font= ""
+                        for(var i = 0; i<4; i++) {
+                            canvas.drawLine(ctx, 0, canvas.height - (i /4.0 ) * canvas.height, canvas.width, canvas.height - (i/4.0) * canvas.height)
+                            ctx.fillText(i + " W",5,canvas.height - (i /4.0 ) * canvas.height - 5)
+                            ctx.fillText(i + " W",canvas.width - 60,canvas.height - (i /4.0 ) * canvas.height - 5)
+                        }
+                        ctx.strokeStyle = Theme.primaryColor
+                        for(var i = 1; i < array.length; i++) {
+                            canvas.drawLine(ctx, (i-1) * step_x, canvas.height - (array[i-1] / 4.0) * canvas.height, i * step_x, canvas.height - (array[i]/4.0) * canvas.height)
+                        }
+                        ctx.restore()
+                    }
                 }
             }
         }

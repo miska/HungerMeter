@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 X-Nemo-Application-Type=silica-qt5
-Name=HungerMeter
-Icon=HungerMeter
-Exec=HungerMeter
+Name=Hunger Meter
+Icon=harbour-hungermeter
+Exec=harbour-hungermeter
 

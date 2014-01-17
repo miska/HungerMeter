@@ -23,6 +23,8 @@
 
 #include <QObject>
 #include <QString>
+#include <QVariant>
+#include <QVariantList>
 #include <queue>
 #include <list>
 #include <time.h>
@@ -40,6 +42,7 @@ public:
     ~Hunger() {}
     Q_INVOKABLE void refresh(int limit);
     Q_INVOKABLE QString avg_text(int number);
+    Q_INVOKABLE QVariantList graph(int number);
 };
 
 #endif // HUNGER_H

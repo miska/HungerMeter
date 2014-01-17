@@ -38,7 +38,7 @@ CoverBackground {
         anchors.centerIn: parent
         spacing: Theme.paddingLarge
         Label {
-            text: qsTr("Now:")
+            text: qsTr("New:")
             color: Theme.secondaryColor
             font.pixelSize: Theme.fontSizeLarge
         }

@@ -1,0 +1,34 @@
+Name: harbour-hungermeter
+Summary: Hunger Meter
+Version: 1.0
+Release: 1
+Group: Qt/Qt
+URL: http://example.org/
+License: GPL-3.0
+Sources:
+- '%{name}-%{version}.tar.bz2'
+Description: "Simple monitor showing current battery consumption. Visible in cover
+  action as well, so you can peek to see how battery hungry is your phone at it\u2019s
+  current state even from running applications (that affect consumption).\n\nIt displays
+  two values - current consumption which is last 1s and average which is average for
+  last 10s. Via pull down/push up menus you can configure different intervals. Settings
+  are not saved so they affect application only till it is shut down.\nHunger meter
+  is so far really simple - not much more than HelloWorld, but it can be already useful
+  to help you decide whether changes you did to your device setup are going to help
+  you get better battery life or not (for example which applications doesn\u2019t
+  hurt keep running on background and which does)."
+Configure: none
+Builder: qtc5
+PkgConfigBR:
+- sailfishapp >= 0.0.10
+- Qt5Core
+- Qt5Qml
+- Qt5Quick
+Requires:
+- sailfishsilica-qt5 >= 0.10.9
+Files:
+- '%{_datadir}/icons/hicolor/86x86/apps/%{name}.png'
+- '%{_datadir}/applications/%{name}.desktop'
+- '%{_datadir}/%{name}/qml'
+- '%{_bindir}'
+PkgBR: []
