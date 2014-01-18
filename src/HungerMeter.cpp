@@ -109,7 +109,7 @@ QVariantList Hunger::graph(int limit) {
 
 Q_DECL_EXPORT int main(int argc, char *argv[])
 {
-    qmlRegisterType<Hunger>("Hunger", 1, 0, "Hunger");
+    qmlRegisterType<Hunger>("harbour.hungermeter.hunger", 1, 0, "Hunger");
 
     return SailfishApp::main(argc, argv);
 }
