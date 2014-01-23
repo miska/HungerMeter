@@ -37,7 +37,7 @@ ApplicationWindow
         repeat: true
         onTriggered: {
             hunger.refresh(avg_time)
-            interval = 200 * (cur_time/2)
+            interval = cur_time * 250
         }
     }
     initialPage: Qt.resolvedUrl("FirstPage.qml")

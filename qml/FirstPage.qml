@@ -64,13 +64,13 @@ Page {
         Timer {
             id: pageTimer
             interval: 1000;
-            running: true;
+            running: app.applicationActive
             repeat: true
             onTriggered: {
                 curText.text = hunger.avg_text(app.cur_time)
                 avgText.text = hunger.avg_text(app.avg_time)
                 interval = app.cur_time * 1000
-                canvas.array = hunger.graph(app.avg_time - 1)
+                canvas.array = hunger.graph(app.avg_time)
                 canvas.requestPaint()
             }
         }
