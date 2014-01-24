@@ -85,8 +85,9 @@ QString Hunger::avg_text(int limit = 10) {
 QVariantList Hunger::graph(int limit) {
     QVariantList ret;
     time_t t = time(NULL);
-    time_t l_t;
+    time_t l_t, b_t;
 
+    b_t = t;
     if(hist.rbegin()->time != t)
         t--;
 
@@ -103,6 +104,8 @@ QVariantList Hunger::graph(int limit) {
         ret.push_front(0.0);
         l_t --;
     }
+    if(b_t == hist.back().time)
+        ret.pop_back();
 
     return ret;
 }

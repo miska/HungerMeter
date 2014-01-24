@@ -149,19 +149,52 @@ Page {
                     onPaint: {
                         var ctx = getContext("2d")
                         var step_x = canvas.width / ( array.length -1 )
+                        var min = 0
+                        var max = 0
+                        var diff = 0
+                        var min_i
+                        var max_i
                         ctx.save()
                         clear(ctx)
-                        ctx.strokeStyle = Theme.secondaryColor
-                        ctx.fillStyle = Theme.secondaryColor;
                         ctx.font= ""
-                        for(var i = 0; i<4; i++) {
-                            canvas.drawLine(ctx, 0, canvas.height - (i /4.0 ) * canvas.height, canvas.width, canvas.height - (i/4.0) * canvas.height)
-                            ctx.fillText(i + " W",5,canvas.height - (i /4.0 ) * canvas.height - 5)
-                            ctx.fillText(i + " W",canvas.width - 60,canvas.height - (i /4.0 ) * canvas.height - 5)
+                        // Get y-range
+                        for(var i = 0; i < array.length; i++) {
+                            if(array[i] < min) {
+                                min = Math.ceil(array[i])
+                            }
+                            if(array[i] > max) {
+                                max = array[i]
+                            }
                         }
+                        // Nicer y-range
+                        if(max<0.5 && min==0)
+                            max+=0.5
+                        if((Math.round(max) != Math.floor(max)) || (max == 0)) {
+                            max++
+                            diff = -0.5
+                        }
+                        if(min!=0)
+                            min--
+                        min_i = Math.floor(min)
+                        max_i = Math.ceil(max)
+                        diff = diff + max_i - min_i
+                        // Draw a grid
+                        for(var i = Math.ceil(min) ; i<max; i++) {
+                            if( i != 0) {
+                                ctx.strokeStyle = Theme.secondaryHighlightColor
+                                ctx.fillStyle = Theme.secondaryHighlightColor;
+                            } else {
+                                ctx.strokeStyle = Theme.secondaryColor
+                                ctx.fillStyle = Theme.secondaryColor;
+                            }
+                            canvas.drawLine(ctx, 0, canvas.height - ((i - min_i) /diff ) * canvas.height, canvas.width, canvas.height - ((i - min_i)/diff) * canvas.height)
+                            ctx.fillText(i + " W",diff,canvas.height - ((i - min_i) /diff ) * canvas.height - 5)
+                            ctx.fillText(i + " W",canvas.width - 60 - ((i<0)?10:0),canvas.height - ((i - min_i) /diff ) * canvas.height - 5)
+                        }
+                        // Draw data
                         ctx.strokeStyle = Theme.primaryColor
                         for(var i = 1; i < array.length; i++) {
-                            canvas.drawLine(ctx, (i-1) * step_x, canvas.height - (array[i-1] / 4.0) * canvas.height, i * step_x, canvas.height - (array[i]/4.0) * canvas.height)
+                            canvas.drawLine(ctx, (i-1) * step_x, canvas.height - ((array[i-1] -min_i) / diff) * canvas.height, i * step_x, canvas.height - ((array[i] - min_i)/diff) * canvas.height)
                         }
                         ctx.restore()
                     }
