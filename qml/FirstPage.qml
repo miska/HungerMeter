@@ -23,6 +23,15 @@ import Sailfish.Silica 1.0
 
 Page {
     id: first
+    property var applicationActive: app.applicationActive
+    function refresh() {
+        curText.text = hunger.avg_text(app.cur_time)
+        avgText.text = hunger.avg_text(app.avg_time)
+        pageTimer.interval = app.cur_time * 1000
+        canvas.array = hunger.graph(app.avg_time)
+        canvas.requestPaint()
+    }
+    onApplicationActiveChanged: { if(applicationActive) first.refresh(); }
     SilicaFlickable {
         anchors.fill: parent
         PullDownMenu {
@@ -64,15 +73,9 @@ Page {
         Timer {
             id: pageTimer
             interval: 1000;
-            running: app.applicationActive
+            running: applicationActive
             repeat: true
-            onTriggered: {
-                curText.text = hunger.avg_text(app.cur_time)
-                avgText.text = hunger.avg_text(app.avg_time)
-                interval = app.cur_time * 1000
-                canvas.array = hunger.graph(app.avg_time)
-                canvas.requestPaint()
-            }
+            onTriggered: first.refresh()
         }
         Column {
             id: column
@@ -149,8 +152,8 @@ Page {
                     onPaint: {
                         var ctx = getContext("2d")
                         var step_x = canvas.width / ( array.length -1 )
-                        var min = 0
-                        var max = 0
+                        var min = 0.0
+                        var max = 0.0
                         var diff = 0
                         var min_i
                         var max_i
@@ -160,26 +163,26 @@ Page {
                         // Get y-range
                         for(var i = 0; i < array.length; i++) {
                             if(array[i] < min) {
-                                min = Math.ceil(array[i])
+                                min = array[i]
                             }
                             if(array[i] > max) {
                                 max = array[i]
                             }
                         }
                         // Nicer y-range
-                        if(max<0.5 && min==0)
+                        // Some grid for nothing
+                        if(max<0.5 && min==0.0)
                             max+=0.5
-                        if((Math.round(max) != Math.floor(max)) || (max == 0)) {
+                        // Show upper bar when above X.5
+                        if(Math.round(max) != Math.floor(max)) {
                             max++
                             diff = -0.5
                         }
-                        if(min!=0)
-                            min--
                         min_i = Math.floor(min)
                         max_i = Math.ceil(max)
                         diff = diff + max_i - min_i
                         // Draw a grid
-                        for(var i = Math.ceil(min) ; i<max; i++) {
+                        for(var i = min_i ; i<max; i++) {
                             if( i != 0) {
                                 ctx.strokeStyle = Theme.secondaryHighlightColor
                                 ctx.fillStyle = Theme.secondaryHighlightColor;
