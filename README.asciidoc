@@ -30,3 +30,7 @@ About the origin
 This application was written by http://michal.hrusecky.net[Michal Hrušecký] as
 an attempt to play with QML and Sailfish. It's initial purpose is better and
 more useful HelloWord, but it evolved into something useful as well :-)
+
+If you like the application, and feel generous, you can
+https://flattr.com/submit/auto?user_id=miska&url=https%3A%2F%2Fgithub.com%2Fmiska%2FHungerMeter[flatter this]
+or send me some bitcoins to BTC: 18FYpT3MyhBx3UGAUv31zem9SMoN4UrNXF
