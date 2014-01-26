@@ -22,8 +22,8 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 
 Page {
-    id: first
-    property var applicationActive: app.applicationActive
+    id: consumption
+    property var applicationActive: app.applicationActive && status == PageStatus.Active
     function refresh() {
         curText.text = hunger.avg_text(app.cur_time)
         avgText.text = hunger.avg_text(app.avg_time)
@@ -31,7 +31,8 @@ Page {
         canvas.array = hunger.graph(app.avg_time)
         canvas.requestPaint()
     }
-    onApplicationActiveChanged: { if(applicationActive) first.refresh(); }
+    onApplicationActiveChanged: { if(applicationActive) { consumption.refresh(); } }
+    onStatusChanged: { if(status == PageStatus.Active) { pageStack.pushAttached(Qt.resolvedUrl("Battery.qml")); } }
     SilicaFlickable {
         anchors.fill: parent
         PullDownMenu {
@@ -75,7 +76,7 @@ Page {
             interval: 1000;
             running: applicationActive
             repeat: true
-            onTriggered: first.refresh()
+            onTriggered: consumption.refresh()
         }
         Column {
             id: column
@@ -85,7 +86,7 @@ Page {
             spacing: Theme.paddingLarge
             PageHeader {
                 id: header
-                title: "Hunger Meter"
+                title: "Consumption"
             }
             Row {
                 width: parent.width
@@ -153,7 +154,7 @@ Page {
                         var ctx = getContext("2d")
                         var step_x = canvas.width / ( array.length -1 )
                         var min = 0.0
-                        var max = 0.0
+                        var max = 0.2
                         var diff = 0
                         var min_i
                         var max_i

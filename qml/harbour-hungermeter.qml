@@ -40,7 +40,7 @@ ApplicationWindow
             interval = cur_time * 250
         }
     }
-    initialPage: Qt.resolvedUrl("FirstPage.qml")
+    initialPage: Qt.resolvedUrl("Consumption.qml")
     cover: Qt.resolvedUrl("CoverPage.qml")
 }
 

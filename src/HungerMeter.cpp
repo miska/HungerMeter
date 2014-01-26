@@ -28,6 +28,103 @@
 
 #include "hunger.h"
 
+long get_bat_cur() {
+    FILE *F;
+    long ret = 0;
+    F = fopen("/sys/class/power_supply/battery/energy_now","r");
+    if(F != NULL) {
+        if(fscanf(F, "%ld", &ret) != 1)
+            ret = 0;
+        fclose(F);
+        ret = ret / 1000;
+    }
+    return ret;
+}
+
+long get_bat_full() {
+    FILE *F;
+    static long ret = 0;
+    if(ret!=0) return ret;
+    F = fopen("/sys/class/power_supply/battery/energy_full","r");
+    if(F != NULL) {
+        if(fscanf(F, "%ld", &ret) != 1)
+            ret = 0;
+        fclose(F);
+        ret = ret / 1000;
+    }
+    return ret;
+}
+
+QString Hunger::tme_left() {
+    // mWs
+    int res = -1;
+    int j = 0;
+    float value = 0.0;
+    char buff[32];
+
+    if(!hist.empty()) {
+        for(auto i = hist.rbegin(); (i != hist.rend()); i++) {
+            j++;
+            value += i->data;
+        }
+        value = value / (float)j;
+    }
+    if(value > 0.01) {
+        value = (((float)get_bat_cur()) * 3.6)/value;
+    } else if(value < -0.01) {
+        value = (((float)abs(get_bat_full() - get_bat_cur())) * 3.6)/abs(value);
+    } else {
+        value=-120.0;
+    }
+    res = round(value/60.0);
+    if((res>=0) && (res<6000)) {
+        if(res>60)
+            sprintf(buff,"%d hours and %d minutes",res/60, (res%60));
+        else
+            sprintf(buff,"%d minutes", (res%60));
+    } else {
+        sprintf(buff,"Estimating...");
+    }
+    return buff;
+}
+
+QString Hunger::bat_cur() {
+    long ret = get_bat_cur();
+    char buff[16];
+    if(ret>1000)
+        sprintf(buff,"%ld %ld mWh", ret/1000, ret%1000);
+    else
+        sprintf(buff,"%ld mWh", ret);
+    return buff;
+}
+
+float Hunger::bat_cur_pr_val() {
+    long full = get_bat_full();
+    long cur = get_bat_cur()*100;
+    if(full != 0) {
+        return std::min((float)100.0,((float)cur)/((float)full));
+    } else {
+        return 0.0;
+    }
+}
+
+QString Hunger::bat_cur_pr() {
+    char buff[16];
+    float pr = bat_cur_pr_val();
+    sprintf(buff,"%.2f %%", pr);
+    return buff;
+}
+
+QString Hunger::bat_full() {
+    long ret = get_bat_full();
+    char buff[16];
+    if(ret>1000)
+        sprintf(buff,"%ld %ld mWh", ret/1000, ret%1000);
+    else
+        sprintf(buff,"%ld mWh", ret);
+    return buff;
+}
+
 void Hunger::refresh(int limit) {
     FILE *I, *U;
     long u,i;
