@@ -42,6 +42,11 @@ public:
     ~Hunger() {}
     Q_INVOKABLE void refresh(int limit);
     Q_INVOKABLE QString avg_text(int number);
+    Q_INVOKABLE QString bat_cur();
+    Q_INVOKABLE QString bat_cur_pr();
+    Q_INVOKABLE float bat_cur_pr_val();
+    Q_INVOKABLE QString bat_full();
+    Q_INVOKABLE QString tme_left();
     Q_INVOKABLE QVariantList graph(int number);
 };
 
