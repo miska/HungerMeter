@@ -68,22 +68,24 @@ QString Hunger::tme_left() {
             value += i->data;
         }
         value = value / (float)j;
+    } else {
+        return "Estimating...";
     }
-    if(value > 0.01) {
+    if(value > 0.001) {
         value = (((float)get_bat_cur()) * 3.6)/value;
-    } else if(value < -0.01) {
+    } else if(value < -0.001) {
         value = (((float)abs(get_bat_full() - get_bat_cur())) * 3.6)/abs(value);
     } else {
         value=-120.0;
     }
     res = round(value/60.0);
-    if((res>=0) && (res<6000)) {
+    if((res>=0) && (res<12000)) {
         if(res>60)
             sprintf(buff,"%d hours and %d minutes",res/60, (res%60));
         else
             sprintf(buff,"%d minutes", (res%60));
     } else {
-        sprintf(buff,"Estimating...");
+        sprintf(buff,"Eternity");
     }
     return buff;
 }
