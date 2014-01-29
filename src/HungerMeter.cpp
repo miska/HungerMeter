@@ -37,7 +37,7 @@ void Hunger::refresh(int limit) {
     I = fopen("/sys/class/power_supply/battery/current_now","r");
     if(I == NULL) return;
     U = fopen("/sys/class/power_supply/battery/voltage_now","r");
-    if(I == NULL) goto close_i;
+    if(U == NULL) goto close_i;
 
     // uV
     if(fscanf(U, "%ld", &u) != 1) goto close;
