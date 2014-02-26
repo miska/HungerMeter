@@ -23,6 +23,7 @@ import Sailfish.Silica 1.0
 
 Page {
     id: battery
+    allowedOrientations: Orientation.All
     property var applicationActive: app.applicationActive && status == PageStatus.Active
     function refresh() {
         fullText.text = hunger.bat_full();
@@ -46,7 +47,7 @@ Page {
             width: parent.width
             height: parent.height
 
-            spacing: Theme.paddingLarge
+            spacing: Theme.paddingMedium
             PageHeader {
                 id: header
                 title: "Battery Info"
@@ -62,12 +63,12 @@ Page {
                 Label {
                     text: qsTr("Full: ")
                     width: parent.width - curText.width - (3 * parent.spacing) - 1
-                    font.pixelSize: Theme.fontSizeExtraLarge
+                    font.pixelSize: Theme.fontSizeLarge
                 }
                 Label {
                     id: fullText
                     text: "0 mWh"
-                    font.pixelSize: Theme.fontSizeExtraLarge
+                    font.pixelSize: Theme.fontSizeLarge
                 }
             }
             Row {
@@ -81,30 +82,30 @@ Page {
                 Label {
                     text: qsTr("Current: ")
                     width: parent.width - curText.width - (3 * parent.spacing) - 1
-                    font.pixelSize: Theme.fontSizeExtraLarge
+                    font.pixelSize: Theme.fontSizeLarge
                 }
                 Label {
                     id: curText
                     text: "0 mWh"
-                    font.pixelSize: Theme.fontSizeExtraLarge
+                    font.pixelSize: Theme.fontSizeLarge
                 }
             }
             Item {
                 width: parent.width
-                height: batIcon.height * 2
+                height: Math.max(battery.height - 10*Theme.fontSizeLarge - 5*Theme.paddingMedium, Theme.fontSizeLarge * 3.5)
                 Rectangle {
                     id: batIcon
                     anchors.centerIn: parent
-                    width: Theme.fontSizeExtraLarge * 7
+                    width: battery.width - Theme.fontSizeExtraLarge * 4
                     color: "transparent"
                     border.color: Theme.primaryColor
                     border.width: 3
-                    height: Theme.fontSizeExtraLarge * 3
+                    height: parent.height / 3
                     Label {
                         anchors.centerIn: parent
                         id: curPrText
                         text: "0 %"
-                        font.pixelSize: Theme.fontSizeExtraLarge
+                        font.pixelSize: Theme.fontSizeLarge
                     }
                     Rectangle {
                         id: batPrIcon
@@ -125,7 +126,7 @@ Page {
                 Label {
                     text: qsTr("Time left: ")
                     width: parent.width - curText.width - (3 * parent.spacing) - 1
-                    font.pixelSize: Theme.fontSizeExtraLarge
+                    font.pixelSize: Theme.fontSizeLarge
                 }
             }
             Row {
@@ -136,7 +137,7 @@ Page {
                     width: parent.width
                     horizontalAlignment: Text.AlignHCenter
                     text: "Estimating"
-                    font.pixelSize: Theme.fontSizeExtraLarge
+                    font.pixelSize: Theme.fontSizeLarge
                 }
             }
         }

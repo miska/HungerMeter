@@ -84,7 +84,7 @@ Page {
             width: parent.width
             height: parent.height
 
-            spacing: Theme.paddingLarge
+            spacing: Theme.paddingMedium
             PageHeader {
                 id: header
                 title: "Consumption"
@@ -100,12 +100,12 @@ Page {
                 Label {
                     text: qsTr("Current: ")
                     width: parent.width - curText.width - (3 * parent.spacing) - 1
-                    font.pixelSize: Theme.fontSizeExtraLarge
+                    font.pixelSize: Theme.fontSizeLarge
                 }
                 Label {
                     id: curText
                     text: ""
-                    font.pixelSize: Theme.fontSizeExtraLarge
+                    font.pixelSize: Theme.fontSizeLarge
                 }
             }
             Row {
@@ -119,12 +119,12 @@ Page {
                 Label {
                     text: qsTr("Average: ")
                     width: parent.width - avgText.width - (3 * parent.spacing) - 1
-                    font.pixelSize: Theme.fontSizeExtraLarge
+                    font.pixelSize: Theme.fontSizeLarge
                 }
                 Label {
                     id: avgText
                     text: ""
-                    font.pixelSize: Theme.fontSizeExtraLarge
+                    font.pixelSize: Theme.fontSizeLarge
                 }
             }
             Row {
