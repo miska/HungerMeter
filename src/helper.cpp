@@ -18,46 +18,64 @@
  *                                                                            *
  ******************************************************************************/
 
-#ifndef HUNGER_H
-#define HUNGER_H
+#include "hunger.h"
 
-#include <QObject>
+#include <sys/types.h>
+#include <dirent.h>
 #include <QString>
-#include <QVariant>
-#include <QVariantList>
-#include <queue>
-#include <list>
-#include <time.h>
+#include <QDir>
+#include <stdio.h>
 
-struct history {
-    float data;
-    time_t time;
-};
+QString bat_path;
 
-long get_bat_cur();
+void init_bat_path() {
+   if(!bat_path.isEmpty()) return;
+   QDir pdir("/sys/class/power_supply/");
+   QDir dir;
 
-long get_bat_full();
+   foreach(QString entry, pdir.entryList()) {
+      dir = pdir;
+      dir.cd(entry);
+      if(dir.exists("energy_now")) {
+         bat_path = dir.absolutePath();
+         return;
+      }
+   }
+}
 
-long get_u();
+long get_data(QString file) {
+   FILE *F;
+   long ret = 0;
+   init_bat_path();
+   F = fopen((bat_path+"/"+file).toLatin1().data(),"r");
+   if(F != NULL) {
+      if(fscanf(F, "%ld", &ret) != 1)
+         return 0;
+      fclose(F);
+   }
+   return ret;
+}
 
-long get_i();
+long get_bat_cur() {
+   return get_data("energy_now")/1000;
+}
 
-long get_power();
+long get_bat_full() {
+   return get_data("energy_full")/1000;
+}
 
-class Hunger : public QObject{
-    Q_OBJECT
-public:
-    std::list<history> hist;
-    explicit Hunger(QObject* parent = 0) : QObject(parent) {}
-    ~Hunger() {}
-    Q_INVOKABLE void refresh(int limit);
-    Q_INVOKABLE QString avg_text(int number);
-    Q_INVOKABLE QString bat_cur();
-    Q_INVOKABLE QString bat_cur_pr();
-    Q_INVOKABLE float bat_cur_pr_val();
-    Q_INVOKABLE QString bat_full();
-    Q_INVOKABLE QString tme_left();
-    Q_INVOKABLE QVariantList graph(int number);
-};
+long get_u() {
+   return get_data("voltage_now")/1000;
+}
 
-#endif // HUNGER_H
+long get_i() {
+   return get_data("current_now")/1000;
+}
+
+long get_power() {
+   long ret = get_data("power_now")/1000;
+   if(ret == 0) {
+      ret = (get_u() * get_i())/1000;
+   }
+   return ret;
+}

@@ -12,7 +12,8 @@ QMAKE_CXXFLAGS += -std=c++0x
 
 CONFIG += sailfishapp
 
-SOURCES += src/HungerMeter.cpp
+SOURCES += src/HungerMeter.cpp \
+    src/helper.cpp
 
 OTHER_FILES += \
     qml/CoverPage.qml \

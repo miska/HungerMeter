@@ -28,33 +28,6 @@
 
 #include "hunger.h"
 
-long get_bat_cur() {
-    FILE *F;
-    long ret = 0;
-    F = fopen("/sys/class/power_supply/battery/energy_now","r");
-    if(F != NULL) {
-        if(fscanf(F, "%ld", &ret) != 1)
-            ret = 0;
-        fclose(F);
-        ret = ret / 1000;
-    }
-    return ret;
-}
-
-long get_bat_full() {
-    FILE *F;
-    static long ret = 0;
-    if(ret!=0) return ret;
-    F = fopen("/sys/class/power_supply/battery/energy_full","r");
-    if(F != NULL) {
-        if(fscanf(F, "%ld", &ret) != 1)
-            ret = 0;
-        fclose(F);
-        ret = ret / 1000;
-    }
-    return ret;
-}
-
 QString Hunger::tme_left() {
     // mWs
     int res = -1;
@@ -94,7 +67,7 @@ QString Hunger::bat_cur() {
     long ret = get_bat_cur();
     char buff[16];
     if(ret>1000)
-        sprintf(buff,"%ld %ld mWh", ret/1000, ret%1000);
+        sprintf(buff,"%ld %03ld mWh", ret/1000, ret%1000);
     else
         sprintf(buff,"%ld mWh", ret);
     return buff;
@@ -121,29 +94,20 @@ QString Hunger::bat_full() {
     long ret = get_bat_full();
     char buff[16];
     if(ret>1000)
-        sprintf(buff,"%ld %ld mWh", ret/1000, ret%1000);
+        sprintf(buff,"%ld %03ld mWh", ret/1000, ret%1000);
     else
         sprintf(buff,"%ld mWh", ret);
     return buff;
 }
 
 void Hunger::refresh(int limit) {
-    FILE *I, *U;
     long u,i;
     history p;
     static int j;
 
-    I = fopen("/sys/class/power_supply/battery/current_now","r");
-    if(I == NULL) return;
-    U = fopen("/sys/class/power_supply/battery/voltage_now","r");
-    if(U == NULL) goto close_i;
-
-    // uV
-    if(fscanf(U, "%ld", &u) != 1) goto close;
-    // uA
-    if(fscanf(I, "%ld", &i) != 1) goto close;
-    // W
-    p.data = (((double)u)/1000000)*(((double)i)/1000000);
+    u = get_u();
+    i = get_i();
+    p.data = ((double)get_power()) / 1000.0;
     p.time = time(NULL);
 
     if(hist.empty() || hist.back().time != p.time) {
@@ -156,10 +120,6 @@ void Hunger::refresh(int limit) {
 
     while((p.time - hist.begin()->time) > (limit+2))
         hist.pop_front();
-close:
-    fclose(U);
-close_i:
-    fclose(I);
 }
 
 QString Hunger::avg_text(int limit = 10) {
