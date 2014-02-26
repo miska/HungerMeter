@@ -23,6 +23,7 @@ import Sailfish.Silica 1.0
 
 Page {
     id: consumption
+    allowedOrientations: Orientation.All
     property var applicationActive: app.applicationActive && status == PageStatus.Active
     function refresh() {
         curText.text = hunger.avg_text(app.cur_time)
