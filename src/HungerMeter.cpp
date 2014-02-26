@@ -101,12 +101,9 @@ QString Hunger::bat_full() {
 }
 
 void Hunger::refresh(int limit) {
-    long u,i;
     history p;
     static int j;
 
-    u = get_u();
-    i = get_i();
     p.data = ((double)get_power()) / 1000.0;
     p.time = time(NULL);
 
