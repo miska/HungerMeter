@@ -32,6 +32,7 @@ Page {
         batPrIcon.width  = (batIcon.width * hunger.bat_cur_pr_val())/100;
         timeText.text = hunger.tme_left();
     }
+    onOrientationChanged: battery.refresh()
     Timer {
         id: batteryTimer
         interval: app.cur_time * 1000
