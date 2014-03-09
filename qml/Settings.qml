@@ -56,11 +56,7 @@ Page {
             Row {
                 width: parent.width
                 spacing: parent.spacing
-                Rectangle {
-                    width: 1
-                    color: "transparent"
-                    height: curCombo.height
-                }
+                x: parent.spacing
                 ComboBox {
                     id: curCombo
                     width: sets.width - parent.spacing * 2
@@ -80,11 +76,7 @@ Page {
             Row {
                 width: parent.width
                 spacing: parent.spacing
-                Rectangle {
-                    width: 1
-                    color: "transparent"
-                    height: avgCombo.height
-                }
+                x: parent.spacing
                 ComboBox {
                     id: avgCombo
                     width: sets.width - parent.spacing * 2
@@ -106,11 +98,7 @@ Page {
             Row {
                 width: parent.width
                 spacing: parent.spacing
-                Rectangle {
-                    width: 1
-                    color: "transparent"
-                    height: readCombo.height
-                }
+                x: parent.spacing
                 ComboBox {
                     id: readCombo
                     width: sets.width - parent.spacing * 2

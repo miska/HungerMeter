@@ -38,11 +38,11 @@ Page {
         anchors.fill: parent
         PullDownMenu {
             MenuItem {
-                text: "About"
+                text: qsTr("About")
                 onClicked: pageStack.push(Qt.resolvedUrl("About.qml"))
             }
             MenuItem {
-                text: "Settings"
+                text: qsTr("Settings")
                 onClicked: pageStack.push(Qt.resolvedUrl("Settings.qml"))
             }
         }
@@ -61,16 +61,12 @@ Page {
             spacing: Theme.paddingMedium
             PageHeader {
                 id: header
-                title: "Consumption"
+                title: qsTr("Consumption")
             }
             Row {
                 width: parent.width
                 spacing: parent.spacing
-                Rectangle {
-                    width: 1
-                    color: "transparent"
-                    height: curText.height
-                }
+                x: parent.spacing
                 Label {
                     text: qsTr("Current: ")
                     width: parent.width - curText.width - (3 * parent.spacing) - 1
@@ -85,11 +81,7 @@ Page {
             Row {
                 width: parent.width
                 spacing: parent.spacing
-                Rectangle {
-                    width: 1
-                    color: "transparent"
-                    height: avgText.height
-                }
+                x: parent.spacing
                 Label {
                     text: qsTr("Average: ")
                     width: parent.width - avgText.width - (3 * parent.spacing) - 1
@@ -104,11 +96,7 @@ Page {
             Row {
                 width: parent.width
                 spacing: parent.spacing
-                Rectangle {
-                    width: 1
-                    color: "transparent"
-                    height: canvas.height
-                }
+                x: parent.spacing
                 Canvas {
                     id: canvas
                     width: parent.width - 2*Theme.paddingLarge

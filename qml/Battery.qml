@@ -44,11 +44,11 @@ Page {
     SilicaFlickable {
         PullDownMenu {
             MenuItem {
-                text: "About"
+                text: qsTr("About")
                 onClicked: pageStack.push(Qt.resolvedUrl("About.qml"))
             }
             MenuItem {
-                text: "Settings"
+                text: qsTr("Settings")
                 onClicked: pageStack.push(Qt.resolvedUrl("Settings.qml"))
             }
         }
@@ -61,16 +61,12 @@ Page {
             spacing: Theme.paddingMedium
             PageHeader {
                 id: header
-                title: "Battery Info"
+                title: qsTr("Battery Info")
             }
             Row {
                 width: parent.width
                 spacing: parent.spacing
-                Rectangle {
-                    width: 1
-                    color: "transparent"
-                    height: curText.height
-                }
+                x: parent.spacing
                 Label {
                     text: qsTr("Full: ")
                     width: parent.width - curText.width - (3 * parent.spacing) - 1
@@ -85,11 +81,7 @@ Page {
             Row {
                 width: parent.width
                 spacing: parent.spacing
-                Rectangle {
-                    width: 1
-                    color: "transparent"
-                    height: curText.height
-                }
+                x: parent.spacing
                 Label {
                     text: qsTr("Current: ")
                     width: parent.width - curText.width - (3 * parent.spacing) - 1
@@ -129,11 +121,7 @@ Page {
             Row {
                 width: parent.width
                 spacing: parent.spacing
-                Rectangle {
-                    width: 1
-                    color: "transparent"
-                    height: curText.height
-                }
+                x: parent.spacing
                 Label {
                     text: qsTr("Time left till " + (hunger.charging() ? "full" : "empty") + ":")
                     width: parent.width - curText.width - (3 * parent.spacing) - 1
@@ -147,7 +135,7 @@ Page {
                     id: timeText
                     width: parent.width
                     horizontalAlignment: Text.AlignHCenter
-                    text: "Estimating"
+                    text: qsTr("Estimating")
                     font.pixelSize: Theme.fontSizeLarge
                 }
             }
