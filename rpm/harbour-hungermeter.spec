@@ -13,12 +13,13 @@ Name:       harbour-hungermeter
 %{!?qtc_make:%define qtc_make make}
 %{?qtc_builddir:%define _builddir %qtc_builddir}
 Summary:    Hunger Meter
-Version:    1.4.0
+Version:    1.5.0
 Release:    1
 Group:      Qt/Qt
 License:    GPL-3.0
 URL:        http://example.org/
-Source0:    %{name}-%{version}.tar.bz2
+Source0:    HungerMeter-big.png
+Source1:    %{name}-%{version}.tar.bz2
 Source100:  harbour-hungermeter.yaml
 Requires:   sailfishsilica-qt5 >= 0.10.9
 BuildRequires:  pkgconfig(sailfishapp) >= 0.0.10
@@ -63,8 +64,12 @@ desktop-file-install --delete-original       \
   --dir %{buildroot}%{_datadir}/applications             \
    %{buildroot}%{_datadir}/applications/*.desktop
 
+install -D -m 0644 %{S:0} %{buildroot}%{_datadir}/icons/hicolor/256x256/apps/%{name}.png
+find %{buildroot}%{_datadir} -type f -exec chmod a-x \{\} \;
+
 %files
 %defattr(-,root,root,-)
+%{_datadir}/icons/hicolor/256x256/apps/%{name}.png
 %{_datadir}/icons/hicolor/86x86/apps/%{name}.png
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/%{name}/qml

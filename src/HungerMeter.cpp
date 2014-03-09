@@ -21,6 +21,8 @@
 #include <QtQuick>
 #include <QVariant>
 #include <QVariantList>
+#include <QObject>
+#include <QSettings>
 #include <sailfishapp.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -119,6 +121,12 @@ void Hunger::refresh(int limit) {
         hist.pop_front();
 }
 
+bool Hunger::charging() {
+    if(!hist.empty() && hist.back().data<0)
+        return true;
+    return false;
+}
+
 QString Hunger::avg_text(int limit = 10) {
     static char buff[128];
     float value = 0.0;
@@ -163,9 +171,20 @@ QVariantList Hunger::graph(int limit) {
     return ret;
 }
 
+Settings::Settings(QObject *parent): QObject(parent) {}
+
+void Settings::setValue(const QString & key, const QVariant & value) {
+    settings_.setValue(key, value);
+}
+
+QVariant Settings::value(const QString &key, const QVariant &defaultValue) const {
+    return settings_.value(key, defaultValue);
+}
+
 Q_DECL_EXPORT int main(int argc, char *argv[])
 {
     qmlRegisterType<Hunger>("harbour.hungermeter.hunger", 1, 0, "Hunger");
+    qmlRegisterType<Settings>("harbour.hungermeter.settings", 1, 0, "Settings");
 
     return SailfishApp::main(argc, argv);
 }

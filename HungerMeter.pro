@@ -17,12 +17,16 @@ SOURCES += src/HungerMeter.cpp \
 
 OTHER_FILES += \
     qml/CoverPage.qml \
+    HungerMeter-big.png \
+    harbour-hungermeter.png \
     rpm/harbour-hungermeter.spec \
     harbour-hungermeter.desktop \
     rpm/harbour-hungermeter.yaml \
     qml/harbour-hungermeter.qml \
     qml/Consumption.qml \
-    qml/Battery.qml
+    qml/Battery.qml \
+    qml/Settings.qml \
+    qml/About.qml
 
 HEADERS += \
     src/hunger.h

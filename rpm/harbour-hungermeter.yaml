@@ -1,11 +1,12 @@
 Name: harbour-hungermeter
 Summary: Hunger Meter
-Version: 1.4.0
+Version: 1.5.0
 Release: 1
 Group: Qt/Qt
 URL: http://example.org/
 License: GPL-3.0
 Sources:
+- HungerMeter-big.png
 - '%{name}-%{version}.tar.bz2'
 Description: "Simple monitor showing current battery consumption. Visible in cover
   action as well, so you can peek to see how battery hungry is your phone at it\u2019s
@@ -27,6 +28,7 @@ PkgConfigBR:
 Requires:
 - sailfishsilica-qt5 >= 0.10.9
 Files:
+- '%{_datadir}/icons/hicolor/256x256/apps/%{name}.png'
 - '%{_datadir}/icons/hicolor/86x86/apps/%{name}.png'
 - '%{_datadir}/applications/%{name}.desktop'
 - '%{_datadir}/%{name}/qml'

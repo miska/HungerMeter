@@ -20,24 +20,28 @@
 
 import QtQuick 2.0
 import harbour.hungermeter.hunger 1.0
+import harbour.hungermeter.settings 1.0
 import Sailfish.Silica 1.0
 
 ApplicationWindow
 {
     id: app
-    property int avg_time: 10
-    property int cur_time: 1
+    property int avg_time:  settings.value("avg_time",   10)
+    property int cur_time:  settings.value("cur_time",    1)
+    property int read_time: settings.value("read_time", 200)
     Hunger {
         id: hunger
     }
+    Settings {
+        id: settings
+    }
     Timer {
         id: refTimer
-        interval: 200;
+        interval: read_time;
         running: true;
         repeat: true
         onTriggered: {
             hunger.refresh(avg_time)
-            interval = cur_time * 250
         }
     }
     initialPage: Qt.resolvedUrl("Consumption.qml")

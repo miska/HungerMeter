@@ -22,6 +22,7 @@
 #define HUNGER_H
 
 #include <QObject>
+#include <QSettings>
 #include <QString>
 #include <QVariant>
 #include <QVariantList>
@@ -55,9 +56,21 @@ public:
     Q_INVOKABLE QString bat_cur();
     Q_INVOKABLE QString bat_cur_pr();
     Q_INVOKABLE float bat_cur_pr_val();
+    Q_INVOKABLE bool charging();
     Q_INVOKABLE QString bat_full();
     Q_INVOKABLE QString tme_left();
     Q_INVOKABLE QVariantList graph(int number);
 };
+
+class Settings : public QObject {
+    Q_OBJECT
+public:
+    explicit Settings(QObject *parent = 0);
+    Q_INVOKABLE void setValue(const QString & key, const QVariant & value);
+    Q_INVOKABLE QVariant value(const QString &key, const QVariant &defaultValue = QVariant()) const;
+private:
+    QSettings settings_;
+};
+
 
 #endif // HUNGER_H

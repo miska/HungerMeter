@@ -38,38 +38,12 @@ Page {
         anchors.fill: parent
         PullDownMenu {
             MenuItem {
-                text: "Current ~ 3s"
-                onClicked: app.cur_time = 3
+                text: "About"
+                onClicked: pageStack.push(Qt.resolvedUrl("About.qml"))
             }
             MenuItem {
-                text: "Current ~ 2s"
-                onClicked: app.cur_time = 2
-            }
-            MenuItem {
-                text: "Current ~ 1s"
-                onClicked: app.cur_time = 1
-            }
-        }
-        PushUpMenu {
-            MenuItem {
-                text: "Average ~ 5s"
-                onClicked: app.avg_time = 5
-            }
-            MenuItem {
-                text: "Average ~ 10s"
-                onClicked: app.avg_time = 10
-            }
-            MenuItem {
-                text: "Average ~ 20s"
-                onClicked: app.avg_time = 20
-            }
-            MenuItem {
-                text: "Average ~ 30s"
-                onClicked: app.avg_time = 30
-            }
-            MenuItem {
-                text: "Average ~ 60s"
-                onClicked: app.avg_time = 60
+                text: "Settings"
+                onClicked: pageStack.push(Qt.resolvedUrl("Settings.qml"))
             }
         }
         Timer {

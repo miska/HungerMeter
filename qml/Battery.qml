@@ -42,6 +42,16 @@ Page {
     }
     onApplicationActiveChanged: { if(applicationActive) { battery.refresh(); } }
     SilicaFlickable {
+        PullDownMenu {
+            MenuItem {
+                text: "About"
+                onClicked: pageStack.push(Qt.resolvedUrl("About.qml"))
+            }
+            MenuItem {
+                text: "Settings"
+                onClicked: pageStack.push(Qt.resolvedUrl("Settings.qml"))
+            }
+        }
         anchors.fill: parent
         Column {
             id: column
@@ -125,7 +135,7 @@ Page {
                     height: curText.height
                 }
                 Label {
-                    text: qsTr("Time left: ")
+                    text: qsTr("Time left till " + (hunger.charging() ? "full" : "empty") + ":")
                     width: parent.width - curText.width - (3 * parent.spacing) - 1
                     font.pixelSize: Theme.fontSizeLarge
                 }
