@@ -61,10 +61,11 @@ Page {
            Row {
                width: parent.width - 2*Theme.paddingMedium
                TextArea {
-                   color: Theme.primaryColor
+                   color: Theme.highlightColor
                    onClicked: Qt.openUrlExternally("http://github.com/miska/HungerMeter");
                    width: parent.width
                    readOnly: true
+                   font.underline: true
                    wrapMode: Text.NoWrap
                    text: qsTr("http://github.com/miska/HungerMeter")
                }

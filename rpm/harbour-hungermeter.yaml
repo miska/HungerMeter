@@ -1,6 +1,6 @@
 Name: harbour-hungermeter
 Summary: Hunger Meter
-Version: 1.5.0
+Version: 2.1.0
 Release: 1
 Group: Qt/Qt
 URL: http://example.org/
@@ -28,7 +28,7 @@ PkgConfigBR:
 Requires:
 - sailfishsilica-qt5 >= 0.10.9
 Files:
-- '%{_datadir}/icons/hicolor/256x256/apps/%{name}.png'
+- '%{_datadir}/harbour-hungermeter/icons/about-icon.png'
 - '%{_datadir}/icons/hicolor/86x86/apps/%{name}.png'
 - '%{_datadir}/applications/%{name}.desktop'
 - '%{_datadir}/%{name}/qml'

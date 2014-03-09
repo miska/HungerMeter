@@ -68,7 +68,7 @@ Page {
                 spacing: parent.spacing
                 x: parent.spacing
                 Label {
-                    text: qsTr("Current: ")
+                    text: qsTr("Current") + " (" + app.cur_time + " s):"
                     width: parent.width - curText.width - (3 * parent.spacing) - 1
                     font.pixelSize: Theme.fontSizeLarge
                 }
@@ -83,7 +83,7 @@ Page {
                 spacing: parent.spacing
                 x: parent.spacing
                 Label {
-                    text: qsTr("Average: ")
+                    text: qsTr("Average") + " (" + app.avg_time + " s):"
                     width: parent.width - avgText.width - (3 * parent.spacing) - 1
                     font.pixelSize: Theme.fontSizeLarge
                 }
