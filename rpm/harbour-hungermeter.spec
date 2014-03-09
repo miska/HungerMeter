@@ -13,7 +13,7 @@ Name:       harbour-hungermeter
 %{!?qtc_make:%define qtc_make make}
 %{?qtc_builddir:%define _builddir %qtc_builddir}
 Summary:    Hunger Meter
-Version:    1.5.0
+Version:    2.0.0
 Release:    1
 Group:      Qt/Qt
 License:    GPL-3.0
@@ -64,12 +64,14 @@ desktop-file-install --delete-original       \
   --dir %{buildroot}%{_datadir}/applications             \
    %{buildroot}%{_datadir}/applications/*.desktop
 
-install -D -m 0644 %{S:0} %{buildroot}%{_datadir}/icons/hicolor/256x256/apps/%{name}.png
+install -D -m 0644 %{S:0} %{buildroot}%{_datadir}/%{name}/icons/about-icon.png
 find %{buildroot}%{_datadir} -type f -exec chmod a-x \{\} \;
+ls -lh %{buildroot}%{_datadir}/%{name}/
+ls -lh %{buildroot}%{_datadir}/%{name}/icons
 
 %files
 %defattr(-,root,root,-)
-%{_datadir}/icons/hicolor/256x256/apps/%{name}.png
+%{_datadir}/harbour-hungermeter/icons/about-icon.png
 %{_datadir}/icons/hicolor/86x86/apps/%{name}.png
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/%{name}/qml

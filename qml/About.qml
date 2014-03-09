@@ -41,7 +41,7 @@ Page {
                    id: about_img
                    width: Math.min(about.width/2, about.height/2)
                    height: width
-                   source: "/usr/share/icons/hicolor/256x256/apps/harbour-hungermeter.png"
+                   source: "/usr/share/harbour-hungermeter/icons/about-icon.png"
                }
            }
 
