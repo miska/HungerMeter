@@ -6,15 +6,21 @@ About application
 
 Simple monitor showing current battery consumption. Visible in cover action as
 well, so you can peek to see how battery hungry is your phone at it's current
-state even from running applications (that affect consumption).
+state even from running applications.
 
-It displays two values - current consumption which is by default last 1s and
-average which is average for last 10s. You can configure these time intervals
-via _Settings_ menu as well as sampling interval.
+It displays three values - current consumption which is by default last 1s,
+average which is by default average for last 10s and long average which is 24
+hours. You can configure these time intervals via _Settings_ menu as well as
+sampling intervals. Short values are kept only during application runtime, long
+average value is kept even between application runs. There is an option to
+store these statistics even to permanent storage to keep them available after
+reboot.
 
 Hunger meter can help you decide whether changes you did to your device setup
 are going to help you get better battery life or not (for example which
-applications doesn't hurt keep running on background and which does).
+applications doesn't hurt keep running on background and which does). It also
+gives you estimate how long will your battery last given your customs and
+average consumption.
 
 Binaries
 --------
