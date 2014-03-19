@@ -31,31 +31,56 @@ CoverBackground {
         onTriggered: {
             coverCurText.text = hunger.avg_text(app.cur_time)
             coverAvgText.text = hunger.avg_text(app.avg_time)
+            coverLongText.text = hunger.long_text()
             interval = app.cur_time * 1000
         }
     }
     Column {
-        anchors.centerIn: parent
-        spacing: Theme.paddingLarge
+        x: Theme.paddingLarge
+        y: Theme.paddingMedium
+        width: parent.width - 2 * Theme.paddingLarge
+        spacing: Theme.paddingSmall
         Label {
-            text: qsTr("Now:")
+            text: qsTr("Now") + (app.show_int?(" (" + app.cur_time + " s):"):":")
+            width: parent.width
             color: Theme.secondaryColor
-            font.pixelSize: Theme.fontSizeLarge
+            horizontalAlignment: Text.AlignLeft
+            font.pixelSize: Theme.fontSizeMedium
         }
         Label {
             id: coverCurText
             text: ""
-            font.pixelSize: Theme.fontSizeExtraLarge
-        }
-        Label {
-            text: qsTr("Avg.:")
-            color: Theme.secondaryColor
+            width: parent.width
+            horizontalAlignment: Text.AlignRight
             font.pixelSize: Theme.fontSizeLarge
         }
         Label {
+            text: qsTr("Avg") + (app.show_int?(" (" + app.avg_time + " s):"):":")
+            width: parent.width
+            color: Theme.secondaryColor
+            horizontalAlignment: Text.AlignLeft
+            font.pixelSize: Theme.fontSizeMedium
+        }
+        Label {
             id: coverAvgText
+            width: parent.width
+            horizontalAlignment: Text.AlignRight
             text: ""
-            font.pixelSize: Theme.fontSizeExtraLarge
+            font.pixelSize: Theme.fontSizeLarge
+        }
+        Label {
+            text: (app.show_int?"":qsTr("Long ")) + qsTr("Avg") + (app.show_int?(" (" + app.long_avg + " h):"):":")
+            width: parent.width
+            color: Theme.secondaryColor
+            horizontalAlignment: Text.AlignLeft
+            font.pixelSize: Theme.fontSizeMedium
+        }
+        Label {
+            id: coverLongText
+            width: parent.width
+            horizontalAlignment: Text.AlignRight
+            text: ""
+            font.pixelSize: Theme.fontSizeLarge
         }
     }
 }

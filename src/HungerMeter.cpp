@@ -30,49 +30,62 @@
 
 #include "hunger.h"
 
-QString Hunger::tme_left() {
-    // mWs
-    int res = -1;
-    int j = 0;
-    float value = 0.0;
-    char buff[32];
+QString format_str(long ret, const char* unit = "mW") {
+    static char buff[16];
+    if(ret == ERR_VAL) {
+        sprintf(buff,"----- %s", unit);
+    } else if(abs(ret)>1000)
+        sprintf(buff,"%ld %03d %s", ret/1000, abs(ret%1000), unit);
+    else
+        sprintf(buff,"%ld %s", ret, unit);
+    return QString(buff);
+}
 
-    if(!hist.empty()) {
-        for(auto i = hist.rbegin(); (i != hist.rend()); i++) {
-            j++;
-            value += i->data;
-        }
-        value = value / (float)j;
+QString Hunger::tme_left() {
+    long value = 0;
+
+    if(get_charging()>0) {
+        value = avg_val(5);
+        if(value > 0)
+            value = avg_val(1);
     } else {
-        return "Estimating...";
+        value = get_long_avg();
+        if((value == ERR_VAL) || (value == 0))
+            value = avg_val(-1);
     }
-    if(value > 0.001) {
-        value = (((float)get_bat_cur()) * 3.6)/value;
-    } else if(value < -0.001) {
-        value = (((float)abs(get_bat_full() - get_bat_cur())) * 3.6)/abs(value);
+
+    if(value == ERR_VAL) {
+        return tr("Estimating...");
+    }
+
+    if(value > 0) {
+        value = (get_bat_cur() * 3600)/value;
+    } else if(value < 0) {
+        value = ((get_bat_full() - get_bat_cur()) * 3600)/abs(value);
     } else {
-        value=-120.0;
+        return tr("Eternity");
     }
-    res = round(value/60.0);
-    if((res>=0) && (res<12000)) {
-        if(res>60)
-            sprintf(buff,"%d hours and %d minutes",res/60, (res%60));
+    value = value/60;
+    if((value>=0) && (value< 60*24*31)) {
+        if(value>60)
+            if(value>60*24) {
+                value /= 60;
+                return (tr("%1 day(s)", 0,value/24).arg(value/24)) + ((value%24 == 0)?"":(tr(" and ")+tr("%2 hour(s)",  0,value%24)).arg(value%24));
+            } else
+                return (tr("%1 hour(s)",0,value/60).arg(value/60)) + ((value%60 == 0)?"":(tr(" and ")+tr("%2 minute(s)",0,value%60)).arg(value%60));
         else
-            sprintf(buff,"%d minutes", (res%60));
+            return tr("%1 minute(s)",0,value).arg(value);
     } else {
-        sprintf(buff,"Eternity");
+        return tr("Eternity");
     }
-    return buff;
 }
 
 QString Hunger::bat_cur() {
-    long ret = get_bat_cur();
-    char buff[16];
-    if(ret>1000)
-        sprintf(buff,"%ld %03ld mWh", ret/1000, ret%1000);
-    else
-        sprintf(buff,"%ld mWh", ret);
-    return buff;
+    return format_str(get_bat_cur(), "mWh");
+}
+
+QString Hunger::bat_full() {
+    return format_str(get_bat_full(), "mWh");
 }
 
 float Hunger::bat_cur_pr_val() {
@@ -92,58 +105,58 @@ QString Hunger::bat_cur_pr() {
     return buff;
 }
 
-QString Hunger::bat_full() {
-    long ret = get_bat_full();
-    char buff[16];
-    if(ret>1000)
-        sprintf(buff,"%ld %03ld mWh", ret/1000, ret%1000);
-    else
-        sprintf(buff,"%ld mWh", ret);
-    return buff;
-}
-
 void Hunger::refresh(int limit) {
     history p;
     static int j;
 
-    p.data = ((double)get_power()) / 1000.0;
+    p.data = get_power();
     p.time = time(NULL);
 
-    if(hist.empty() || hist.back().time != p.time) {
-        hist.push_back(p);
-        j=1;
-    } else {
-        hist.back().data = (hist.back().data * ((float)j) + p.data) / ((float)(j+1));
-        j++;
+    if(p.data != ERR_VAL) {
+        if(hist.empty() || hist.back().time != p.time) {
+            hist.push_back(p);
+            j=1;
+        } else {
+            hist.back().data = ((hist.back().data * j) + p.data) / (j+1);
+            j++;
+        }
     }
 
     while((p.time - hist.begin()->time) > (limit+2))
         hist.pop_front();
 }
 
-bool Hunger::charging() {
-    if(!hist.empty() && hist.back().data<0)
-        return true;
-    return false;
+int Hunger::charging() {
+    return get_charging();
 }
 
-QString Hunger::avg_text(int limit = 10) {
-    static char buff[128];
-    float value = 0.0;
+long Hunger::avg_val(int limit = 10) {
+    long value = 0;
     int j = 0;
     time_t t = time(NULL);
     if(hist.rbegin()->time != t)
         t--;
 
     if(!hist.empty()) {
-        for(auto i = hist.rbegin(); (i != hist.rend()) && ((t - i->time) < limit); i++) {
+        for(auto i = hist.rbegin(); (i != hist.rend()) && (((t - i->time) < limit) || (limit < 0) ); i++) {
             j++;
             value += i->data;
         }
     }
 
-    sprintf(buff,"%.4f W", value/((float)std::max(j,1)));
-    return QString(buff);
+    if(j<1)
+        return ERR_VAL;
+
+    return value/std::max(j,1);
+}
+
+
+QString Hunger::avg_text(int limit = 10) {
+    return format_str(avg_val(limit), "mW");
+}
+
+QString Hunger::long_text() {
+    return format_str(get_long_avg(),"mW");
 }
 
 QVariantList Hunger::graph(int limit) {
@@ -160,7 +173,7 @@ QVariantList Hunger::graph(int limit) {
         l_t--;
         for(l_t = t; (i != hist.rend()) && ((t - l_t) < limit); i++) {
             l_t = i->time;
-            ret.push_front(i->data);
+            ret.push_front(((float)i->data)/1000.0);
         }
     }
 

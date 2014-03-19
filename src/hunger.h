@@ -30,8 +30,10 @@
 #include <list>
 #include <time.h>
 
+#define ERR_VAL -99999
+
 struct history {
-    float data;
+    int data;
     time_t time;
 };
 
@@ -43,7 +45,16 @@ long get_u();
 
 long get_i();
 
+long get_uptime();
+
+int get_charging();
+
+int get_long_avg();
+
 long get_power();
+
+void hunger_long_iter();
+
 
 class Hunger : public QObject{
     Q_OBJECT
@@ -52,11 +63,14 @@ public:
     explicit Hunger(QObject* parent = 0) : QObject(parent) {}
     ~Hunger() {}
     Q_INVOKABLE void refresh(int limit);
+    Q_INVOKABLE void long_iter() { hunger_long_iter(); }
     Q_INVOKABLE QString avg_text(int number);
+    Q_INVOKABLE long avg_val(int number);
+    Q_INVOKABLE QString long_text();
     Q_INVOKABLE QString bat_cur();
     Q_INVOKABLE QString bat_cur_pr();
     Q_INVOKABLE float bat_cur_pr_val();
-    Q_INVOKABLE bool charging();
+    Q_INVOKABLE int charging();
     Q_INVOKABLE QString bat_full();
     Q_INVOKABLE QString tme_left();
     Q_INVOKABLE QVariantList graph(int number);

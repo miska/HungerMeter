@@ -24,15 +24,15 @@ import Sailfish.Silica 1.0
 Page {
     id: battery
     allowedOrientations: Orientation.All
-    property var applicationActive: app.applicationActive && status == PageStatus.Active
+    property var applicationActive: app.applicationActive && (status == PageStatus.Active || status == PageStatus.Activating)
     function refresh() {
         fullText.text = hunger.bat_full();
         curText.text  = hunger.bat_cur();
         curPrText.text  = hunger.bat_cur_pr();
         batPrIcon.width  = (batIcon.width * hunger.bat_cur_pr_val())/100;
         timeText.text = hunger.tme_left();
+        timeLeft.text = qsTr("Time left till " + (hunger.charging()>0 ? "full" : "empty") + ":")
     }
-    onOrientationChanged: battery.refresh()
     Timer {
         id: batteryTimer
         interval: app.cur_time * 1000
@@ -96,6 +96,7 @@ Page {
             Item {
                 width: parent.width
                 height: Math.max(battery.height - 10*Theme.fontSizeLarge - 5*Theme.paddingMedium, Theme.fontSizeLarge * 3.5)
+                onWidthChanged: battery.refresh()
                 Rectangle {
                     id: batIcon
                     anchors.centerIn: parent
@@ -123,7 +124,8 @@ Page {
                 spacing: parent.spacing
                 x: parent.spacing
                 Label {
-                    text: qsTr("Time left till " + (hunger.charging() ? "full" : "empty") + ":")
+                    id: timeLeft
+                    text: qsTr("Time left till " + (hunger.charging()>0 ? "full" : "empty") + ":")
                     width: parent.width - curText.width - (3 * parent.spacing) - 1
                     font.pixelSize: Theme.fontSizeLarge
                 }

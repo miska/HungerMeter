@@ -24,10 +24,11 @@ import Sailfish.Silica 1.0
 Page {
     id: consumption
     allowedOrientations: Orientation.All
-    property var applicationActive: app.applicationActive && status == PageStatus.Active
+    property var applicationActive: app.applicationActive && (status == PageStatus.Active || status == PageStatus.Activating)
     function refresh() {
         curText.text = hunger.avg_text(app.cur_time)
         avgText.text = hunger.avg_text(app.avg_time)
+        longText.text = hunger.long_text()
         pageTimer.interval = app.cur_time * 1000
         canvas.array = hunger.graph(app.avg_time)
         canvas.requestPaint()
@@ -68,7 +69,7 @@ Page {
                 spacing: parent.spacing
                 x: parent.spacing
                 Label {
-                    text: qsTr("Current") + " (" + app.cur_time + " s):"
+                    text: qsTr("Current") + (app.show_int?(" (" + app.cur_time + " s):"):":")
                     width: parent.width - curText.width - (3 * parent.spacing) - 1
                     font.pixelSize: Theme.fontSizeLarge
                 }
@@ -83,12 +84,27 @@ Page {
                 spacing: parent.spacing
                 x: parent.spacing
                 Label {
-                    text: qsTr("Average") + " (" + app.avg_time + " s):"
+                    text: qsTr("Average") + (app.show_int?(" (" + app.avg_time + " s):"):":")
                     width: parent.width - avgText.width - (3 * parent.spacing) - 1
                     font.pixelSize: Theme.fontSizeLarge
                 }
                 Label {
                     id: avgText
+                    text: ""
+                    font.pixelSize: Theme.fontSizeLarge
+                }
+            }
+            Row {
+                width: parent.width
+                spacing: parent.spacing
+                x: parent.spacing
+                Label {
+                    text: qsTr("Average") + (app.show_int?(" (" + app.long_avg + " h):"):" (" + qsTr("longer") + "):")
+                    width: parent.width - longText.width - (3 * parent.spacing) - 1
+                    font.pixelSize: Theme.fontSizeLarge
+                }
+                Label {
+                    id: longText
                     text: ""
                     font.pixelSize: Theme.fontSizeLarge
                 }

@@ -29,6 +29,9 @@ ApplicationWindow
     property int avg_time:  settings.value("avg_time",   10)
     property int cur_time:  settings.value("cur_time",    1)
     property int read_time: settings.value("read_time", 200)
+    property int long_time: settings.value("long_time",   5)
+    property int long_avg:  settings.value("long_avg",   24)
+    property bool show_int: settings.value("show_int",    1)>0
     Hunger {
         id: hunger
     }
@@ -41,7 +44,18 @@ ApplicationWindow
         running: true;
         repeat: true
         onTriggered: {
-            hunger.refresh(avg_time)
+            hunger.refresh(avg_time);
+        }
+    }
+    Timer {
+        id: longTimer
+        // Loging mechanism checks whether action is needed,
+        // but we need to make sure it is tested frequent enough
+        interval: 5000;
+        running: true;
+        repeat: true
+        onTriggered: {
+            hunger.long_iter();
         }
     }
     initialPage: Qt.resolvedUrl("Consumption.qml")

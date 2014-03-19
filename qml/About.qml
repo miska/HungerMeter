@@ -67,7 +67,7 @@ Page {
                    readOnly: true
                    font.underline: true
                    wrapMode: Text.NoWrap
-                   text: qsTr("http://github.com/miska/HungerMeter")
+                   text: "http://github.com/miska/HungerMeter"
                }
            }
        }

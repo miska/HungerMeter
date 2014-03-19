@@ -45,37 +45,78 @@ void init_bat_path() {
 
 long get_data(QString file) {
    FILE *F;
-   long ret = 0;
+   long ret = ERR_VAL;
    init_bat_path();
    F = fopen((bat_path+"/"+file).toLatin1().data(),"r");
    if(F != NULL) {
       if(fscanf(F, "%ld", &ret) != 1)
-         return 0;
+         return ERR_VAL;
       fclose(F);
+   } else {
+       return ERR_VAL;
    }
-   return ret;
+   return ret/1000;
 }
 
 long get_bat_cur() {
-   return get_data("energy_now")/1000;
+   return get_data("energy_now");
+}
+
+long get_uptime() {
+    long ret=0;
+    char tmp='0';
+    FILE* F;
+
+    F = fopen("/proc/uptime", "r");
+    if(F != NULL) {
+        while(isdigit(tmp = fgetc(F))) {
+            ret = ret*10 + tmp - '0';
+        }
+        fclose(F);
+    }
+    return ret;
 }
 
 long get_bat_full() {
-   return get_data("energy_full")/1000;
+   return get_data("energy_full");
 }
 
 long get_u() {
-   return get_data("voltage_now")/1000;
+   return get_data("voltage_now");
+}
+
+int get_charging() {
+    FILE *F;
+    char buff[4];
+    init_bat_path();
+    F = fopen((bat_path+"/status").toLatin1().data(),"r");
+    if(F != NULL) {
+       if(!fread(buff, 4, 1, F))
+          return 0;
+       fclose(F);
+    } else {
+        return 0;
+    }
+    if(strncmp(buff,"Discharging",4) == 0)
+        return -1;
+    if(strncmp(buff,"Charging",4) == 0)
+        return 1;
+    return 0;
 }
 
 long get_i() {
-   return get_data("current_now")/1000;
+   return get_data("current_now");
 }
 
 long get_power() {
-   long ret = get_data("power_now")/1000;
-   if(ret == 0) {
-      ret = (get_u() * get_i())/1000;
+   long ret = get_data("power_now");
+   if(ret == ERR_VAL) {
+      long u = get_u();
+      long i = get_i();
+      if((u == ERR_VAL) || (i == ERR_VAL))
+          return ERR_VAL;
+      ret = (u * i)/1000;
+
    }
    return ret;
 }
