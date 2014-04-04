@@ -41,7 +41,7 @@ QString format_str(long ret, const char* unit = "mW") {
     return QString(buff);
 }
 
-QString Hunger::tme_left() {
+long Hunger::tme_left_data() {
     long value = 0;
 
     if(get_charging()>0) {
@@ -54,30 +54,61 @@ QString Hunger::tme_left() {
             value = avg_val(-1);
     }
 
-    if(value == ERR_VAL) {
-        return tr("Estimating...");
-    }
+    if(value == ERR_VAL)
+        return value;
 
     if(value > 0) {
         value = (get_bat_cur() * 3600)/value;
     } else if(value < 0) {
         value = ((get_bat_full() - get_bat_cur()) * 3600)/abs(value);
-    } else {
-        return tr("Eternity");
     }
+
+    return value;
+}
+
+QString Hunger::tme_left_short() {
+    long value = tme_left_data();
+    char buff[8];
+
+    if(value == ERR_VAL) {
+        return "-----";
+    }
+
     value = value/60;
-    if((value>=0) && (value< 60*24*31)) {
-        if(value>60)
-            if(value>60*24) {
-                value /= 60;
-                return (tr("%1 day(s)", 0,value/24).arg(value/24)) + ((value%24 == 0)?"":(tr(" and ")+tr("%2 hour(s)",  0,value%24)).arg(value%24));
-            } else
-                return (tr("%1 hour(s)",0,value/60).arg(value/60)) + ((value%60 == 0)?"":(tr(" and ")+tr("%2 minute(s)",0,value%60)).arg(value%60));
-        else
-            return tr("%1 minute(s)",0,value).arg(value);
+
+    if(value == 0 || value > 60*24*31)
+        return "∞";
+
+    if(value > 60*72) {
+        value /= 60;
+        return tr("%1 day(s)", 0,value/24).arg(value/24);
     } else {
-        return tr("Eternity");
+        sprintf(buff,"%02ld:%02ld",value/60,value%60);
+        return buff;
     }
+
+}
+
+QString Hunger::tme_left() {
+    long value = tme_left_data();
+
+    if(value == ERR_VAL) {
+        return tr("Estimating...");
+    }
+
+    value = value/60;
+
+    if(value == 0 || value > 60*24*31)
+        return tr("Eternity");
+
+    if(value>60)
+        if(value>60*24) {
+            value /= 60;
+            return (tr("%1 day(s)", 0,value/24).arg(value/24)) + ((value%24 == 0)?"":(tr(" and ")+tr("%2 hour(s)",  0,value%24)).arg(value%24));
+        } else
+            return (tr("%1 hour(s)",0,value/60).arg(value/60)) + ((value%60 == 0)?"":(tr(" and ")+tr("%2 minute(s)",0,value%60)).arg(value%60));
+    else
+        return tr("%1 minute(s)",0,value).arg(value);
 }
 
 QString Hunger::bat_cur() {

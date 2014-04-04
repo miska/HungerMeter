@@ -58,6 +58,8 @@ void hunger_long_iter();
 
 class Hunger : public QObject{
     Q_OBJECT
+private:
+    long tme_left_data();
 public:
     std::list<history> hist;
     explicit Hunger(QObject* parent = 0) : QObject(parent) {}
@@ -73,6 +75,7 @@ public:
     Q_INVOKABLE int charging();
     Q_INVOKABLE QString bat_full();
     Q_INVOKABLE QString tme_left();
+    Q_INVOKABLE QString tme_left_short();
     Q_INVOKABLE QVariantList graph(int number);
 };
 
