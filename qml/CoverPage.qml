@@ -23,6 +23,7 @@ import Sailfish.Silica 1.0
 
 CoverBackground {
     id: coverPage
+
     Timer {
         id: pageTimer
         interval: 1000;
@@ -69,17 +70,30 @@ CoverBackground {
             font.pixelSize: Theme.fontSizeLarge
         }
         Label {
-            text: (app.show_int?"":qsTr("Long ")) + qsTr("Avg") + (app.show_int?(" (" + app.long_avg + " h):"):":")
+            text: {
+                if(percOnCover == false) {
+                    (app.show_int?"":qsTr("Long ")) + qsTr("Avg") + (app.show_int?(" (" + app.long_avg + " h):"):":")
+                } else {
+                    "Battery:"
+                }
+            }
+
             width: parent.width
             color: Theme.secondaryColor
             horizontalAlignment: Text.AlignLeft
             font.pixelSize: Theme.fontSizeMedium
         }
         Label {
-            id: coverLongText
             width: parent.width
             horizontalAlignment: Text.AlignRight
-            text: ""
+            text: {
+                if(percOnCover == false) {
+                    hunger.long_text()
+                } else {
+                    hunger.bat_cur_pr()
+                }
+            }
+
             font.pixelSize: Theme.fontSizeLarge
         }
     }

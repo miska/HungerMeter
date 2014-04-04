@@ -179,6 +179,16 @@ Page {
                     settings.setValue("persistent", checked?1:0);
                 }
             }
+            TextSwitch {
+                id: percOnCover
+                text: qsTr("Percentage on cover")
+                description: qsTr("Show HungerMeter's battery percentage on the app cover.")
+                checked: app.percOnCover
+                onCheckedChanged: {
+                    app.percOnCover = checked
+                    settings.setValue("percOnCover", checked?1:0);
+                }
+            }
         }
     }
 }
