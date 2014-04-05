@@ -23,8 +23,9 @@ import Sailfish.Silica 1.0
 
 CoverBackground {
     id: coverPage
+    property bool bat_active: app.battery
     function refresh() {
-        if(!app.battery) {
+        if(!bat_active) {
         coverCurText.text =  hunger.avg_text(app.cur_time)
         coverAvgText.text =  hunger.avg_text(app.avg_time)
         coverLongText.text = hunger.long_text()
@@ -44,7 +45,7 @@ CoverBackground {
     Column {
         x: Theme.paddingMedium
         y: Theme.paddingMedium
-        visible: !app.battery
+        visible: !bat_active
         width: parent.width - 2 * Theme.paddingLarge
         spacing: Theme.paddingSmall
         Label {
@@ -93,7 +94,7 @@ CoverBackground {
     Column {
         x: Theme.paddingLarge
         y: Theme.paddingMedium
-        visible: app.battery
+        visible: bat_active
         width: parent.width - 2 * Theme.paddingLarge
         spacing: Theme.paddingLarge
         Label {
@@ -130,9 +131,9 @@ CoverBackground {
 
         CoverAction {
             id: coverSwith
-            iconSource: (!app.battery)?"image://theme/icon-cover-next":"image://theme/icon-cover-previous"
+            iconSource: (!(app.battery^bat_active))?"image://theme/icon-cover-next":"image://theme/icon-cover-previous"
             onTriggered: {
-                app.battery = !app.battery;
+                bat_active = !bat_active;
                 refresh();
             }
         }

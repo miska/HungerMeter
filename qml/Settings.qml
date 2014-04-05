@@ -182,8 +182,7 @@ Page {
             }
             TextSwitch {
                 id: battery_first
-                text: qsTr("Battery firts on cover")
-                description: qsTr("Show battery info on the app cover on start.")
+                text: qsTr("Show battery info first")
                 onCheckedChanged: {
                     settings.setValue("battery_first", checked?1:0);
                 }

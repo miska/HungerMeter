@@ -34,7 +34,7 @@ Page {
         canvas.requestPaint()
     }
     onApplicationActiveChanged: { if(applicationActive) { consumption.refresh(); } }
-    onStatusChanged: { if(status == PageStatus.Active) { pageStack.pushAttached(Qt.resolvedUrl("Battery.qml")); } }
+    onStatusChanged: { if((status == PageStatus.Active) && (!app.battery)) { pageStack.pushAttached(Qt.resolvedUrl("Battery.qml")); } }
     SilicaFlickable {
         anchors.fill: parent
         PullDownMenu {

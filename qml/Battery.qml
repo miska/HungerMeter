@@ -33,6 +33,7 @@ Page {
         timeText.text = hunger.tme_left();
         timeLeft.text = qsTr("Time left till " + (hunger.charging()>0 ? "full" : "empty") + ":")
     }
+    onStatusChanged: { if((status == PageStatus.Active) && (app.battery)) { pageStack.pushAttached(Qt.resolvedUrl("Consumption.qml")); } }
     Timer {
         id: batteryTimer
         interval: app.cur_time * 1000

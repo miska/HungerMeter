@@ -59,7 +59,7 @@ ApplicationWindow
             hunger.long_iter();
         }
     }
-    initialPage: Qt.resolvedUrl("Consumption.qml")
+    initialPage: battery?Qt.resolvedUrl("Battery.qml"):Qt.resolvedUrl("Consumption.qml")
     cover: Qt.resolvedUrl("CoverPage.qml")
 }
 
