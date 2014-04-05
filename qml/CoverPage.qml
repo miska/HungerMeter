@@ -24,6 +24,14 @@ import Sailfish.Silica 1.0
 CoverBackground {
     id: coverPage
 
+    function percentageOrNot(onCoverBool) {
+        if(onCoverBool) {
+            coverPercentageOrNot.text = hunger.bat_cur_pr()
+        } else {
+            coverPercentageOrNot.text = hunger.long_text()
+        }
+    }
+
     Timer {
         id: pageTimer
         interval: 1000;
@@ -32,7 +40,7 @@ CoverBackground {
         onTriggered: {
             coverCurText.text = hunger.avg_text(app.cur_time)
             coverAvgText.text = hunger.avg_text(app.avg_time)
-            coverLongText.text = hunger.long_text()
+            coverPage.percentageOrNot(percOnCover)
             interval = app.cur_time * 1000
         }
     }
@@ -69,6 +77,7 @@ CoverBackground {
             text: ""
             font.pixelSize: Theme.fontSizeLarge
         }
+
         Label {
             text: {
                 if(percOnCover == false) {
@@ -77,23 +86,15 @@ CoverBackground {
                     "Battery:"
                 }
             }
-
             width: parent.width
             color: Theme.secondaryColor
             horizontalAlignment: Text.AlignLeft
             font.pixelSize: Theme.fontSizeMedium
         }
         Label {
+            id: coverPercentageOrNot
             width: parent.width
             horizontalAlignment: Text.AlignRight
-            text: {
-                if(percOnCover == false) {
-                    hunger.long_text()
-                } else {
-                    hunger.bat_cur_pr()
-                }
-            }
-
             font.pixelSize: Theme.fontSizeLarge
         }
     }
