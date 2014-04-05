@@ -26,12 +26,13 @@ import Sailfish.Silica 1.0
 ApplicationWindow
 {
     id: app
-    property int avg_time:  settings.value("avg_time",   10)
-    property int cur_time:  settings.value("cur_time",    1)
-    property int read_time: settings.value("read_time", 200)
-    property int long_time: settings.value("long_time",   5)
-    property int long_avg:  settings.value("long_avg",   24)
-    property bool show_int: settings.value("show_int",    1)>0
+    property int avg_time:  settings.value("avg_time",     10)
+    property int cur_time:  settings.value("cur_time",      1)
+    property int read_time: settings.value("read_time",   200)
+    property int long_time: settings.value("long_time",     5)
+    property int long_avg:  settings.value("long_avg",     24)
+    property bool show_int: settings.value("show_int",      1)>0
+    property bool battery:  settings.value("battery_first", 0)>0
     Hunger {
         id: hunger
     }

@@ -23,18 +23,17 @@ import Sailfish.Silica 1.0
 
 CoverBackground {
     id: coverPage
-    property bool vis_first: true
     function refresh() {
-        if(vis_first) {
+        if(!app.battery) {
         coverCurText.text =  hunger.avg_text(app.cur_time)
         coverAvgText.text =  hunger.avg_text(app.avg_time)
-        } else {
         coverLongText.text = hunger.long_text()
+        } else {
+        coverBatPr.text =    hunger.bat_cur_pr()
         coverTmeLeft.text =  hunger.tme_left_short()
         }
         pageTimer.interval = app.cur_time * 1000
     }
-
     Timer {
         id: pageTimer
         interval: 1000;
@@ -43,11 +42,11 @@ CoverBackground {
         onTriggered: coverPage.refresh()
     }
     Column {
-        x: Theme.paddingLarge
+        x: Theme.paddingMedium
         y: Theme.paddingMedium
-        visible: vis_first
+        visible: !app.battery
         width: parent.width - 2 * Theme.paddingLarge
-        spacing: Theme.paddingLarge
+        spacing: Theme.paddingSmall
         Label {
             text: qsTr("Now") + (app.show_int?(" (" + app.cur_time + " s):"):":")
             width: parent.width
@@ -60,7 +59,7 @@ CoverBackground {
             text: ""
             width: parent.width
             horizontalAlignment: Text.AlignRight
-            font.pixelSize: Theme.fontSizeLarge
+            font.pixelSize: Theme.fontSizeMedium
         }
         Label {
             text: qsTr("Avg") + (app.show_int?(" (" + app.avg_time + " s):"):":")
@@ -74,15 +73,8 @@ CoverBackground {
             width: parent.width
             horizontalAlignment: Text.AlignRight
             text: ""
-            font.pixelSize: Theme.fontSizeLarge
+            font.pixelSize: Theme.fontSizeMedium
         }
-    }
-    Column {
-        x: Theme.paddingLarge
-        y: Theme.paddingMedium
-        visible: !vis_first
-        width: parent.width - 2 * Theme.paddingLarge
-        spacing: Theme.paddingLarge
         Label {
             text: (app.show_int?"":qsTr("Long ")) + qsTr("Avg") + (app.show_int?(" (" + app.long_avg + " h):"):":")
             width: parent.width
@@ -94,6 +86,27 @@ CoverBackground {
             id: coverLongText
             width: parent.width
             horizontalAlignment: Text.AlignRight
+            text: hunger.long_text()
+            font.pixelSize: Theme.fontSizeMedium
+        }
+    }
+    Column {
+        x: Theme.paddingLarge
+        y: Theme.paddingMedium
+        visible: app.battery
+        width: parent.width - 2 * Theme.paddingLarge
+        spacing: Theme.paddingLarge
+        Label {
+            text: qsTr("Battery left:")
+            width: parent.width
+            color: Theme.secondaryColor
+            horizontalAlignment: Text.AlignLeft
+            font.pixelSize: Theme.fontSizeMedium
+        }
+        Label {
+            id: coverBatPr
+            width: parent.width
+            horizontalAlignment: Text.AlignHCenter
             text: ""
             font.pixelSize: Theme.fontSizeLarge
         }
@@ -117,9 +130,9 @@ CoverBackground {
 
         CoverAction {
             id: coverSwith
-            iconSource: vis_first?"image://theme/icon-cover-next":"image://theme/icon-cover-previous"
+            iconSource: (!app.battery)?"image://theme/icon-cover-next":"image://theme/icon-cover-previous"
             onTriggered: {
-                vis_first = !vis_first;
+                app.battery = !app.battery;
                 refresh();
             }
         }

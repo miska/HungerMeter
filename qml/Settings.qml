@@ -49,6 +49,7 @@ Page {
         }
         showInterval.checked = settings.value("show_int", 1) > 0;
         persistent.checked = settings.value("persistent", 0) > 0;
+        battery_first.checked = settings.value("battery_first", 0) > 0;
     }
     SilicaFlickable {
         anchors.fill: parent
@@ -177,6 +178,16 @@ Page {
                 description: qsTr("Wears down you flash, but keeps data accross reboots.")
                 onCheckedChanged: {
                     settings.setValue("persistent", checked?1:0);
+                }
+            }
+            TextSwitch {
+                id: battery_first
+                text: qsTr("Battery firts on cover")
+                description: qsTr("Show battery info on the app cover on start.")
+                checked: app.battery
+                onCheckedChanged: {
+                    app.battery = checked
+                    settings.setValue("battery_first", checked?1:0);
                 }
             }
         }
