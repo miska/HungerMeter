@@ -32,6 +32,7 @@ ApplicationWindow
     property int long_time: settings.value("long_time",   5)
     property int long_avg:  settings.value("long_avg",   24)
     property bool show_int: settings.value("show_int",    1)>0
+    property bool percOnCover: settings.value("percOnCover",    1)>0
     Hunger {
         id: hunger
     }
