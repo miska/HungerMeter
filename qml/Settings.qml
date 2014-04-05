@@ -184,9 +184,7 @@ Page {
                 id: battery_first
                 text: qsTr("Battery firts on cover")
                 description: qsTr("Show battery info on the app cover on start.")
-                checked: app.battery
                 onCheckedChanged: {
-                    app.battery = checked
                     settings.setValue("battery_first", checked?1:0);
                 }
             }
