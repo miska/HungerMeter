@@ -202,7 +202,6 @@ QVariantList Hunger::graph(int limit) {
             i++;
         t--;
         l_t--;
-        printf("For\n");
         for(l_t = t; (i != hist.rend()) && ((t - l_t) < limit); i++) {
             l_t = i->time;
             QVariantList val;

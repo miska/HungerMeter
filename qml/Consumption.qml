@@ -128,7 +128,7 @@ Page {
                     function clear(ctx) {
                         ctx.clearRect(0, 0, width, height);
                     }
-                    property variant array: [ [ 0.0, 0.0 ], [0.0, 0.0] ]
+                    property variant array: [ [ 0.0, 0.0 ], [0.0, 0.0] ];
                     onPaint: {
                         var ctx = getContext("2d");
                         var step_x = canvas.width / ( array.length -1);
@@ -140,6 +140,7 @@ Page {
                         var max_i = 0;
                         var diff_y = 0;
                         var step_y = 0;
+                        var max_txt = 0;
                         var diff_x = max_x - min_x;
                         var px = Math.round(canvas.height/25);
                         ctx.save();
@@ -174,7 +175,9 @@ Page {
                         min_i = Math.floor(min_y);
                         max_i = Math.ceil(max_y);
                         diff_y = diff_y + max_i - min_i;
-                        step_y = Math.max(Math.round(diff_y / 4), 1);
+                        step_y = Math.max(Math.floor (diff_y / 3), 1);
+                        max_y = max_y + diff_y / 10;
+                        diff_y += diff_y / 10;
 
                         // Draw a grid
                         for(var i = min_i ; i < max_y; i += step_y) {
@@ -190,7 +193,10 @@ Page {
                                             canvas.height - ((i - min_i) / diff_y ) * canvas.height,
                                             canvas.width,
                                             canvas.height - ((i - min_i) / diff_y ) * canvas.height);
+                            max_txt = Math.max(ctx.measureText(i + " W ").width, max_txt);
                         }
+                        canvas.drawLine(ctx,   canvas.width/3, 0,   canvas.width/3, canvas.height);
+                        canvas.drawLine(ctx, 2*canvas.width/3, 0, 2*canvas.width/3, canvas.height);
 
                         // Draw data
                         ctx.strokeStyle = Theme.primaryColor;
@@ -215,6 +221,24 @@ Page {
                             ctx.fillText(txt, 0, canvas.height - ((i - min_i) / diff_y ) * canvas.height - px / 4);
                             ctx.fillText(txt, canvas.width - ctx.measureText(txt).width, canvas.height - ((i - min_i) / diff_y ) * canvas.height - px / 4);
                         }
+
+                        function format_time(dte) {
+                            var ret;
+                            ret = dte.getHours() + ":";
+                            var tmp;
+                            tmp = dte.getMinutes();
+                            ret += ((tmp<10)?("0"+tmp):tmp) + ":";
+                            tmp = dte.getSeconds();
+                            ret += ((tmp<10)?("0"+tmp):tmp);
+                            return ret;
+                        }
+
+                        var tmp_dat;
+                        tmp_dat = new Date((min_x + 2*diff_x/3)*1000);
+                        ctx.fillText(format_time(tmp_dat), 2*canvas.width/3 + px/4, px + px/4);
+                        tmp_dat = new Date((min_x +   diff_x/3)*1000);
+                        var txt = format_time(tmp_dat);
+                        ctx.fillText(txt, canvas.width/3 - px/4 - ctx.measureText(txt).width, px + px/4);
 
                         ctx.restore()
                     }
