@@ -26,12 +26,12 @@ Page {
     allowedOrientations: Orientation.All
     property var applicationActive: app.applicationActive && (status == PageStatus.Active || status == PageStatus.Activating)
     function refresh() {
-        curText.text = hunger.avg_text(app.cur_time)
-        avgText.text = hunger.avg_text(app.avg_time)
-        longText.text = hunger.long_text()
-        pageTimer.interval = app.cur_time * 1000
-        canvas.array = hunger.graph(app.avg_time)
-        canvas.requestPaint()
+        curText.text = hunger.avg_text(app.cur_time);
+        avgText.text = hunger.avg_text(app.avg_time);
+        longText.text = hunger.long_text();
+        pageTimer.interval = app.cur_time * 1000;
+        canvas.array = hunger.graph(app.avg_time);
+        canvas.requestPaint();
     }
     onApplicationActiveChanged: { if(applicationActive) { consumption.refresh(); } }
     onStatusChanged: { if((status == PageStatus.Active) && (!app.battery)) { pageStack.pushAttached(Qt.resolvedUrl("Battery.qml")); } }
@@ -128,57 +128,94 @@ Page {
                     function clear(ctx) {
                         ctx.clearRect(0, 0, width, height);
                     }
-                    property variant array: [ 0.0, 0.0 ]
+                    property variant array: [ [ 0.0, 0.0 ], [0.0, 0.0] ]
                     onPaint: {
-                        var ctx = getContext("2d")
-                        var step_x = canvas.width / ( array.length -1 )
-                        var min = 0.0
-                        var max = 0.2
-                        var diff = 0
-                        var min_i
-                        var max_i
-                        ctx.save()
-                        clear(ctx)
-                        ctx.font= ""
+                        var ctx = getContext("2d");
+                        var step_x = canvas.width / ( array.length -1);
+                        var min_y = 0.0;
+                        var max_y = 0.2;
+                        var max_x = array[0][1];
+                        var min_x = array[array.length - 1][1];
+                        var min_i = 0;
+                        var max_i = 0;
+                        var diff_y = 0;
+                        var step_y = 0;
+                        var diff_x = max_x - min_x;
+                        var px = Math.round(canvas.height/25);
+                        ctx.save();
+                        clear(ctx);
+                        // Set reasonable font size
+                        ctx.font = "" + px + "px Monospace";
                         // Get y-range
                         for(var i = 0; i < array.length; i++) {
-                            if(array[i] < min) {
-                                min = array[i]
+                            if(array[i][0] < min_y) {
+                                min_y = array[i][0];
                             }
-                            if(array[i] > max) {
-                                max = array[i]
+                            if(array[i][0] > max_y) {
+                                max_y = array[i][0];
+                            }
+                            if(array[i][1] < min_x) {
+                                min_x = array[i][1];
+                            }
+                            if(array[i][1] > max_x) {
+                                max_x = array[i][1];
                             }
                         }
                         // Nicer y-range
                         // Some grid for nothing
-                        if(max<0.5 && min==0.0)
-                            max+=0.5
+                        if(max_y < 0.5 && min_y == 0.0)
+                            max_y += 0.5;
+
                         // Show upper bar when above X.5
-                        if(Math.round(max) != Math.floor(max)) {
-                            max++
-                            diff = -0.5
+                        if(Math.round(max_y) != Math.floor(max_y)) {
+                            max_y++;
+                            diff_y = -0.5;
                         }
-                        min_i = Math.floor(min)
-                        max_i = Math.ceil(max)
-                        diff = diff + max_i - min_i
+                        min_i = Math.floor(min_y);
+                        max_i = Math.ceil(max_y);
+                        diff_y = diff_y + max_i - min_i;
+                        step_y = Math.max(Math.round(diff_y / 4), 1);
+
                         // Draw a grid
-                        for(var i = min_i ; i<max; i++) {
+                        for(var i = min_i ; i < max_y; i += step_y) {
                             if( i != 0) {
-                                ctx.strokeStyle = Theme.secondaryHighlightColor
+                                ctx.strokeStyle = Theme.secondaryHighlightColor;
                                 ctx.fillStyle = Theme.secondaryHighlightColor;
                             } else {
-                                ctx.strokeStyle = Theme.secondaryColor
+                                ctx.strokeStyle = Theme.secondaryColor;
                                 ctx.fillStyle = Theme.secondaryColor;
                             }
-                            canvas.drawLine(ctx, 0, canvas.height - ((i - min_i) /diff ) * canvas.height, canvas.width, canvas.height - ((i - min_i)/diff) * canvas.height)
-                            ctx.fillText(i + " W",diff,canvas.height - ((i - min_i) /diff ) * canvas.height - 5)
-                            ctx.fillText(i + " W",canvas.width - 60 - ((i<0)?10:0),canvas.height - ((i - min_i) /diff ) * canvas.height - 5)
+                            canvas.drawLine(ctx,
+                                            0,
+                                            canvas.height - ((i - min_i) / diff_y ) * canvas.height,
+                                            canvas.width,
+                                            canvas.height - ((i - min_i) / diff_y ) * canvas.height);
                         }
+
                         // Draw data
-                        ctx.strokeStyle = Theme.primaryColor
+                        ctx.strokeStyle = Theme.primaryColor;
                         for(var i = 1; i < array.length; i++) {
-                            canvas.drawLine(ctx, (i-1) * step_x, canvas.height - ((array[i-1] -min_i) / diff) * canvas.height, i * step_x, canvas.height - ((array[i] - min_i)/diff) * canvas.height)
+                            canvas.drawLine(ctx,
+                                            ((array[i-1][1] - min_x) / diff_x) * canvas.width,
+                                            canvas.height - ((array[i-1][0] - min_i) / diff_y) * canvas.height,
+                                            ((array[i][1]   - min_x) / diff_x) * canvas.width,
+                                            canvas.height - ((array[i  ][0] - min_i) / diff_y) * canvas.height);
                         }
+
+                        // Draw a legend
+                        for(var i = min_i ; i < max_y; i += step_y) {
+                            if( i != 0) {
+                                ctx.strokeStyle = Theme.secondaryHighlightColor;
+                                ctx.fillStyle = Theme.secondaryHighlightColor;
+                            } else {
+                                ctx.strokeStyle = Theme.secondaryColor;
+                                ctx.fillStyle = Theme.secondaryColor;
+                            }
+                            var txt = i + " W";
+                            ctx.fillText(txt, 0, canvas.height - ((i - min_i) / diff_y ) * canvas.height - px / 4);
+                            ctx.fillText(txt, canvas.width - ctx.measureText(txt).width, canvas.height - ((i - min_i) / diff_y ) * canvas.height - px / 4);
+                        }
+
                         ctx.restore()
                     }
                 }

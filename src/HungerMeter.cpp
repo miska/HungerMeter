@@ -202,15 +202,14 @@ QVariantList Hunger::graph(int limit) {
             i++;
         t--;
         l_t--;
+        printf("For\n");
         for(l_t = t; (i != hist.rend()) && ((t - l_t) < limit); i++) {
             l_t = i->time;
-            ret.push_front(((float)i->data)/1000.0);
+            QVariantList val;
+            val.push_back(((double)i->data)/1000.0);
+            val.push_back((double)l_t);
+            ret.push_back(val);
         }
-    }
-
-    while(t-l_t < limit) {
-        ret.push_front(0.0);
-        l_t --;
     }
     return ret;
 }
@@ -225,8 +224,7 @@ QVariant Settings::value(const QString &key, const QVariant &defaultValue) const
     return settings_.value(key, defaultValue);
 }
 
-Q_DECL_EXPORT int main(int argc, char *argv[])
-{
+Q_DECL_EXPORT int main(int argc, char *argv[]) {
     qmlRegisterType<Hunger>("harbour.hungermeter.hunger", 1, 0, "Hunger");
     qmlRegisterType<Settings>("harbour.hungermeter.settings", 1, 0, "Settings");
 
