@@ -26,12 +26,13 @@ CoverBackground {
     property bool bat_active: app.battery
     function refresh() {
         if(!bat_active) {
-        coverCurText.text =  hunger.avg_text(app.cur_time)
-        coverAvgText.text =  hunger.avg_text(app.avg_time)
-        coverLongText.text = hunger.long_text()
+            coverCurText.text =  hunger.avg_text(app.cur_time)
+            coverAvgText.text =  hunger.avg_text(app.avg_time)
+            coverLongText.text = hunger.long_text()
         } else {
-        coverBatPr.text =    hunger.bat_cur_pr()
-        coverTmeLeft.text =  hunger.tme_left_short()
+            coverBatPr.text =    hunger.bat_cur_pr()
+            coverBatEn.text =    hunger.bat_cur()
+            coverTmeLeft.text =  hunger.tme_left_short()
         }
         pageTimer.interval = app.cur_time * 1000
     }
@@ -96,13 +97,20 @@ CoverBackground {
         y: Theme.paddingMedium
         visible: bat_active
         width: parent.width - 2 * Theme.paddingLarge
-        spacing: Theme.paddingLarge
+        spacing: Theme.paddingSmall
         Label {
             text: qsTr("Battery left:")
             width: parent.width
             color: Theme.secondaryColor
             horizontalAlignment: Text.AlignLeft
             font.pixelSize: Theme.fontSizeMedium
+        }
+        Label {
+            id: coverBatEn
+            width: parent.width
+            horizontalAlignment: Text.AlignHCenter
+            text: ""
+            font.pixelSize: Theme.fontSizeLarge
         }
         Label {
             id: coverBatPr
