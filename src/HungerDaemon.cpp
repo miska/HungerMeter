@@ -9,6 +9,7 @@ QSettings* set = NULL;
 
 bool updated = false;
 bool persistent = false;
+QDateTime last = QDateTime::fromTime_t(0);
 
 bool init_db() {
 
@@ -58,7 +59,6 @@ bool init_db() {
 void save_data() {
    static bool first_run = true;
    static int cleanup_time = 0;
-   static QDateTime last = QDateTime::fromTime_t(0);
    int wait_time;
 
    if(!init_db())
@@ -146,22 +146,22 @@ int get_long_avg() {
 }
 
 QVariantList get_long_graph_data() {
-    QVariantList ret;
-    if(!init_db()) {
+    static QVariantList ret;
+    int long_avg = set->value("long_avg",   24).toInt();
+    static QDateTime last_t = QDateTime::currentDateTime().addSecs(-long_avg * 3600);
+    if(!init_db() || last_t >= last) {
         return ret;
     }
     time_t now_t;
     int now_e;
 
-    int long_avg = set->value("long_avg",   24).toInt();
-
     QSqlQuery query(db);
 
-    if(query.exec(QString("SELECT time,energy,state FROM data WHERE time > '%1' ORDER BY time ASC;").arg(QDateTime::currentDateTime().addSecs(-long_avg * 3600).toString("yyyy-MM-dd HH:mm:ss"))))
-    {
+    if(query.exec(QString("SELECT time,energy,state FROM data WHERE time > '%1' ORDER BY time ASC;").arg(last_t.toString("yyyy-MM-dd HH:mm:ss")))) {
         while(query.next()) {
             QVariantList tmp;
-            now_t = query.value(0).toDateTime().toTime_t();
+            last_t = query.value(0).toDateTime();
+            now_t = last_t.toTime_t();
             now_e = query.value(1).toInt();
             tmp.push_back(((double)now_e)/1000.0);
             tmp.push_back((double)now_t);
@@ -170,5 +170,7 @@ QVariantList get_long_graph_data() {
     } else {
         printf("Err: %s\n", query.lastError().text().toStdString().c_str());
     }
+    while(ret.back().toList()[1].toDouble() < last_t.addSecs(-long_avg * 3600).toTime_t())
+        ret.pop_back();
     return ret;
 }
