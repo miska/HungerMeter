@@ -145,7 +145,7 @@ Page {
                     property variant array: [ [ 0.0, 0.0 ] ];
                     onPaint: {
                         var ctx = getContext("2d");
-                        var px = Math.round(canvas.height/25);
+                        var px = Math.max(Math.round(canvas.height/25), Math.round(canvas.width/40));
                         ctx.save();
                         clear(ctx);
 
