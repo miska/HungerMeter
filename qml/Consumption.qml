@@ -31,7 +31,7 @@ Page {
         longText.text = hunger.long_text();
         pageTimer.interval = app.cur_time * 1000;
         var now_t = Math.round(Date.now()/300000);
-        if(!show_long_term || last_long_refresh < now_t) {
+        if(!show_long_term || last_long_refresh < now_t || array.length < 2) {
             canvas.array = show_long_term ? hunger.long_graph(app.long_avg * 3600) : hunger.graph(app.avg_time);
             canvas.requestPaint();
             if(show_long_term)
