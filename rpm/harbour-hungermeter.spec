@@ -31,17 +31,25 @@ BuildRequires:  desktop-file-utils
 %description
 Simple monitor showing current battery consumption. Visible in cover action as
 well, so you can peek to see how battery hungry is your phone at it’s current
-state even from running applications (that affect consumption).
+state even from running applications.
 
-It displays two values - current consumption which is last 1s and average which
-is average for last 10s. Via pull down/push up menus you can configure
-different intervals. Settings are not saved so they affect application only
-till it is shut down.
+It displays three values - current consumption which is by default last 1s,
+average which is by default average for last 10s and long average which is 24
+hours. You can configure these time intervals via Settings menu as well as
+sampling intervals. Short values are kept only during application runtime, long
+average value is kept even between application runs. There is an option to
+store these statistics even to permanent storage to keep them available after
+reboot.
 
-Hunger meter is so far really simple - not much more than HelloWorld, but it
-can be already useful to help you decide whether changes you did to your device
-setup are going to help you get better battery life or not (for example which
-applications doesn’t hurt keep running on background and which does).
+Hunger meter can help you decide whether changes you did to your device setup
+are going to help you get better battery life or not (for example which
+applications doesn’t hurt keep running on background and which does). It also
+gives you estimate how long will your battery last given your customs and
+average consumption.
+
+NOTE: Running this application can also increase a consumption a little. It
+periodically takes measurements to average them and displaying graph can take
+some more effort as well.
 
 %prep
 %setup -q -n %{name}-%{version}
