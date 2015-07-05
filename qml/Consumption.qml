@@ -30,10 +30,16 @@ Page {
         avgText.text = hunger.avg_text(app.avg_time);
         longText.text = hunger.long_text();
         pageTimer.interval = app.cur_time * 1000;
-        canvas.array = show_long_term ? hunger.long_graph(app.long_avg * 3600) : hunger.graph(app.avg_time);
-        canvas.requestPaint();
+        var now_t = Math.round(Date.now()/300000);
+        if(!show_long_term || last_long_refresh < now_t) {
+            canvas.array = show_long_term ? hunger.long_graph(app.long_avg * 3600) : hunger.graph(app.avg_time);
+            canvas.requestPaint();
+            if(show_long_term)
+                last_long_refresh = now_t;
+        }
     }
     property var show_long_term: false;
+    property var last_long_refresh: 0;
     onApplicationActiveChanged: { if(applicationActive) { consumption.refresh(); } }
     onStatusChanged: { if((status == PageStatus.Active) && (!app.battery)) { pageStack.pushAttached(Qt.resolvedUrl("Battery.qml")); } }
     SilicaFlickable {
