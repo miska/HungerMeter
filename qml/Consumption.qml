@@ -224,8 +224,24 @@ Page {
                                             canvas.height - ((i - min_i) / diff_y ) * canvas.height);
                             max_txt = Math.max(ctx.measureText(i + (consumption.show_long_term ? " Wh " : " W ")).width, max_txt);
                         }
-                        canvas.drawLine(ctx,   canvas.width/3, 0,   canvas.width/3, canvas.height);
-                        canvas.drawLine(ctx, 2*canvas.width/3, 0, 2*canvas.width/3, canvas.height);
+
+                        function round_time(what, diff) {
+                            if(diff>3600) {
+                                var tmp_dat = new Date(what*1000);
+                                tmp_dat.setSeconds(0);
+                                if(diff>3600*24) {
+                                    tmp_dat.setMinutes(0);
+                                    tmp_dat.setHours(0);
+                                }
+                                what = Math.round(tmp_dat.getTime()/1000);
+                            }
+                            return what;
+                        }
+
+                        var vline1 = round_time(min_x +   diff_x/3, diff_x);
+                        var vline2 = round_time(min_x + 2*diff_x/3, diff_x);
+                        canvas.drawLine(ctx, (vline1 - min_x) * canvas.width / diff_x, 0, (vline1 - min_x) * canvas.width / diff_x, canvas.height);
+                        canvas.drawLine(ctx, (vline2 - min_x) * canvas.width / diff_x, 0, (vline2 - min_x) * canvas.width / diff_x, canvas.height);
 
                         // Draw data
                         ctx.strokeStyle = Theme.primaryColor;
@@ -251,23 +267,28 @@ Page {
                             ctx.fillText(txt, canvas.width - ctx.measureText(txt).width, canvas.height - ((i - min_i) / diff_y ) * canvas.height - px / 4);
                         }
 
-                        function format_time(dte) {
-                            var ret;
-                            ret = dte.getHours() + ":";
-                            var tmp;
-                            tmp = dte.getMinutes();
-                            ret += ((tmp<10)?("0"+tmp):tmp) + ":";
-                            tmp = dte.getSeconds();
-                            ret += ((tmp<10)?("0"+tmp):tmp);
+                        function format_time(in_dte, diff) {
+                            var dte = new Date(in_dte*1000);
+                            var dow = [ qsTr("Sun"), qsTr("Mon"), qsTr("Tue"), qsTr("Wed"), qsTr("Thu"), qsTr("Fri"), qsTr("Sat")];
+                            var ret = "";
+                            if(diff < 3600*24) {
+                               var tmp;
+                               tmp = dte.getMinutes();
+                               tmp = ((tmp<10)?("0"+tmp):tmp);
+                               ret = "" + dte.getHours() + ":" + tmp;
+                               if(diff<3600) {
+                                   tmp = dte.getSeconds();
+                                   tmp = ((tmp<10)?("0"+tmp):tmp);
+                                   ret += ":" + tmp;
+                               }
+                            } else {
+                               ret = dow[dte.getDay()];
+                            }
                             return ret;
                         }
 
-                        var tmp_dat;
-                        tmp_dat = new Date((min_x + 2*diff_x/3)*1000);
-                        ctx.fillText(format_time(tmp_dat), 2*canvas.width/3 + px/4, px + px/4);
-                        tmp_dat = new Date((min_x +   diff_x/3)*1000);
-                        var txt = format_time(tmp_dat);
-                        ctx.fillText(txt, canvas.width/3 - px/4 - ctx.measureText(txt).width, px + px/4);
+                        ctx.fillText(format_time(vline1, diff_x), (vline1 - min_x) * canvas.width/diff_x + px/4, px + px/4);
+                        ctx.fillText(format_time(vline2, diff_x), (vline2 - min_x) * canvas.width/diff_x + px/4, px + px/4);
 
                         ctx.restore()
                     }
