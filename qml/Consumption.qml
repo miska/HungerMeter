@@ -83,6 +83,7 @@ Page {
                 spacing: parent.spacing
                 x: parent.spacing
                 Label {
+                    id: current_label
                     text: qsTr("Current") + (app.show_int?(" (" + app.cur_time + " s):"):":")
                     width: parent.width - curText.width - (3 * parent.spacing) - 1
                     font.pixelSize: Theme.fontSizeLarge
@@ -145,7 +146,7 @@ Page {
                     property variant array: [ [ 0.0, 0.0 ] ];
                     onPaint: {
                         var ctx = getContext("2d");
-                        var px = Math.max(Math.round(canvas.height/25), Math.round(canvas.width/40));
+                        var px = current_label.height / 2;
                         ctx.save();
                         clear(ctx);
 
@@ -204,12 +205,17 @@ Page {
                         min_i = Math.floor(min_y);
                         max_i = Math.ceil(max_y);
                         diff_y = diff_y + max_i - min_i;
-                        step_y = Math.max(Math.floor (diff_y / 3), 1);
-                        max_y = max_y + diff_y / 10;
-                        diff_y += diff_y / 10;
+                        var y_offset = 1.5*px*diff_y/canvas.height;
+                        max_y = max_y + y_offset;
+                        diff_y += y_offset;
+                        step_y = Math.max(Math.round(diff_y / Math.round((canvas.height / (6*px)))), 0.5);
+                        if(diff_y < 2)
+                            step_y = 0.5;
 
                         // Draw a grid
-                        for(var i = min_i ; i < max_y; i += step_y) {
+
+                        // Draw horizontal lines
+                        for(var i = min_i ; i < max_y - y_offset; i += step_y) {
                             if( i != 0) {
                                 ctx.strokeStyle = Theme.secondaryHighlightColor;
                                 ctx.fillStyle = Theme.secondaryHighlightColor;
@@ -225,23 +231,45 @@ Page {
                             max_txt = Math.max(ctx.measureText(i + (consumption.show_long_term ? " Wh " : " W ")).width, max_txt);
                         }
 
+                        // Helper function rounding time
                         function round_time(what, diff) {
+                            var ret;
                             if(diff>3600) {
                                 var tmp_dat = new Date(what*1000);
+                                if(tmp_dat.getSeconds() > 30) {
+                                    tmp_dat.setMinutes(tmp_dat.getMinutes()+1);
+                                }
                                 tmp_dat.setSeconds(0);
-                                if(diff>3600*24) {
+                                if(diff>=3600*24) {
+                                    if(tmp_dat.getMinutes()>30) {
+                                        tmp_dat.setHours(tmp_dat.getHours()+1);
+                                    }
                                     tmp_dat.setMinutes(0);
+                                    if(tmp_dat.getHours()>12) {
+                                        tmp_dat = new Date(tmp_dat.getMilliseconds() + 24*3600*1000);
+                                        tmp_dat.setSeconds(0);
+                                        tmp_dat.setMinutes(0);
+                                    }
                                     tmp_dat.setHours(0);
                                 }
-                                what = Math.round(tmp_dat.getTime()/1000);
+                                ret = Math.round(tmp_dat.getTime()/1000);
+                            } else {
+                                ret = what;
                             }
-                            return what;
+                            return ret;
                         }
 
-                        var vline1 = round_time(min_x +   diff_x/3, diff_x);
-                        var vline2 = round_time(min_x + 2*diff_x/3, diff_x);
-                        canvas.drawLine(ctx, (vline1 - min_x) * canvas.width / diff_x, 0, (vline1 - min_x) * canvas.width / diff_x, canvas.height);
-                        canvas.drawLine(ctx, (vline2 - min_x) * canvas.width / diff_x, 0, (vline2 - min_x) * canvas.width / diff_x, canvas.height);
+                        // Draw vertical lines at rounded points
+                        ctx.strokeStyle = Theme.secondaryHighlightColor;
+                        ctx.fillStyle = Theme.secondaryHighlightColor;
+                        var vline = [];
+                        var scale_x = Math.floor(canvas.width/ctx.measureText(" 00:00:00 ").width);
+                        for(i=1; i< scale_x; i++ ) {
+                            vline.push(round_time(min_x + i*diff_x/scale_x, diff_x));
+                        }
+                        for(i=0; i<vline.length; i++) {
+                            canvas.drawLine(ctx, (vline[i] - min_x) * canvas.width / diff_x, 0, (vline[i] - min_x) * canvas.width / diff_x, canvas.height);
+                        }
 
                         // Draw data
                         ctx.strokeStyle = Theme.primaryColor;
@@ -253,8 +281,10 @@ Page {
                                             canvas.height - ((array[i  ][0] - min_i) / diff_y) * canvas.height);
                         }
 
-                        // Draw a legend
-                        for(var i = min_i ; i < max_y; i += step_y) {
+                        // Draw anotations
+
+                        // Horizontal lines
+                        for(var i = min_i ; i < max_y - y_offset; i += step_y) {
                             if( i != 0) {
                                 ctx.strokeStyle = Theme.secondaryHighlightColor;
                                 ctx.fillStyle = Theme.secondaryHighlightColor;
@@ -264,9 +294,12 @@ Page {
                             }
                             var txt = i + (consumption.show_long_term ? " Wh" : " W");
                             ctx.fillText(txt, 0, canvas.height - ((i - min_i) / diff_y ) * canvas.height - px / 4);
-                            ctx.fillText(txt, canvas.width - ctx.measureText(txt).width, canvas.height - ((i - min_i) / diff_y ) * canvas.height - px / 4);
                         }
 
+                        ctx.strokeStyle = Theme.secondaryHighlightColor;
+                        ctx.fillStyle = Theme.secondaryHighlightColor;
+
+                        // Helper function to format time
                         function format_time(in_dte, diff) {
                             var dte = new Date(in_dte*1000);
                             var dow = [ qsTr("Sun"), qsTr("Mon"), qsTr("Tue"), qsTr("Wed"), qsTr("Thu"), qsTr("Fri"), qsTr("Sat")];
@@ -287,8 +320,10 @@ Page {
                             return ret;
                         }
 
-                        ctx.fillText(format_time(vline1, diff_x), (vline1 - min_x) * canvas.width/diff_x + px/4, px + px/4);
-                        ctx.fillText(format_time(vline2, diff_x), (vline2 - min_x) * canvas.width/diff_x + px/4, px + px/4);
+                        // Vertical lines
+                        for(i=0; i<vline.length; i++) {
+                            ctx.fillText(format_time(vline[i], diff_x), (vline[i] - min_x) * canvas.width/diff_x + px/4, px + px/4);
+                        }
 
                         ctx.restore()
                     }
