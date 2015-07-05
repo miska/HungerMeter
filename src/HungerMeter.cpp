@@ -213,6 +213,10 @@ QVariantList Hunger::graph(int limit) {
     return ret;
 }
 
+QVariantList Hunger::long_graph(int limit) {
+    return get_long_graph_data();
+}
+
 Settings::Settings(QObject *parent): QObject(parent) {}
 
 void Settings::setValue(const QString & key, const QVariant & value) {

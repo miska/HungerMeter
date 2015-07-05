@@ -102,7 +102,6 @@ void hunger_long_iter() {
     save_data();
 }
 
-
 int get_long_avg() {
     static long last_avg = ERR_VAL;
 
@@ -144,4 +143,32 @@ int get_long_avg() {
     }
     updated = true;
     return ERR_VAL;
+}
+
+QVariantList get_long_graph_data() {
+    QVariantList ret;
+    if(!init_db()) {
+        return ret;
+    }
+    time_t now_t;
+    int now_e;
+
+    int long_avg = set->value("long_avg",   24).toInt();
+
+    QSqlQuery query(db);
+
+    if(query.exec(QString("SELECT time,energy,state FROM data WHERE time > '%1' ORDER BY time ASC;").arg(QDateTime::currentDateTime().addSecs(-long_avg * 3600).toString("yyyy-MM-dd HH:mm:ss"))))
+    {
+        while(query.next()) {
+            QVariantList tmp;
+            now_t = query.value(0).toDateTime().toTime_t();
+            now_e = query.value(1).toInt();
+            tmp.push_back(((double)now_e)/1000.0);
+            tmp.push_back((double)now_t);
+            ret.push_front(tmp);
+        }
+    } else {
+        printf("Err: %s\n", query.lastError().text().toStdString().c_str());
+    }
+    return ret;
 }

@@ -55,6 +55,7 @@ long get_power();
 
 void hunger_long_iter();
 
+QVariantList get_long_graph_data();
 
 class Hunger : public QObject{
     Q_OBJECT
@@ -77,6 +78,7 @@ public:
     Q_INVOKABLE QString tme_left();
     Q_INVOKABLE QString tme_left_short();
     Q_INVOKABLE QVariantList graph(int number);
+    Q_INVOKABLE QVariantList long_graph(int number);
 };
 
 class Settings : public QObject {

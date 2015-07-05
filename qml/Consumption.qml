@@ -30,9 +30,10 @@ Page {
         avgText.text = hunger.avg_text(app.avg_time);
         longText.text = hunger.long_text();
         pageTimer.interval = app.cur_time * 1000;
-        canvas.array = hunger.graph(app.avg_time);
+        canvas.array = show_long_term ? hunger.long_graph(app.long_avg * 3600) : hunger.graph(app.avg_time);
         canvas.requestPaint();
     }
+    property var show_long_term: false;
     onApplicationActiveChanged: { if(applicationActive) { consumption.refresh(); } }
     onStatusChanged: { if((status == PageStatus.Active) && (!app.battery)) { pageStack.pushAttached(Qt.resolvedUrl("Battery.qml")); } }
     SilicaFlickable {
@@ -47,6 +48,13 @@ Page {
                 onClicked: pageStack.push(Qt.resolvedUrl("Settings.qml"))
             }
         }
+        PushUpMenu {
+            MenuItem {
+                text: show_long_term ? qsTr("Short term graph") : qsTr("Long term graph")
+                onClicked: { canvas.clear(canvas.getContext("2d")); show_long_term = !show_long_term; consumption.refresh(); }
+            }
+        }
+
         Timer {
             id: pageTimer
             interval: 1000;
@@ -128,9 +136,28 @@ Page {
                     function clear(ctx) {
                         ctx.clearRect(0, 0, width, height);
                     }
-                    property variant array: [ [ 0.0, 0.0 ], [0.0, 0.0] ];
+                    property variant array: [ [ 0.0, 0.0 ] ];
                     onPaint: {
                         var ctx = getContext("2d");
+                        var px = Math.round(canvas.height/25);
+                        ctx.save();
+                        clear(ctx);
+
+                        // Set reasonable font size
+                        ctx.font = "" + px + "px Monospace";
+
+                        // Error out early
+                        if(array.length < 2) {
+                            ctx.font = "" + (px + 2) + "px Monospace";
+                            ctx.strokeStyle = Theme.secondaryColor;
+                            ctx.fillStyle = Theme.secondaryColor;
+                            var txt = qsTr("No data available!!!");
+                            ctx.fillText(txt, (canvas.width - ctx.measureText(txt).width)/2, canvas.height/2 - px);
+                            ctx.restore();
+                            return;
+                        }
+
+                        // Initialize some variables
                         var step_x = canvas.width / ( array.length -1);
                         var min_y = 0.0;
                         var max_y = 0.2;
@@ -142,11 +169,7 @@ Page {
                         var step_y = 0;
                         var max_txt = 0;
                         var diff_x = max_x - min_x;
-                        var px = Math.round(canvas.height/25);
-                        ctx.save();
-                        clear(ctx);
-                        // Set reasonable font size
-                        ctx.font = "" + px + "px Monospace";
+
                         // Get y-range
                         for(var i = 0; i < array.length; i++) {
                             if(array[i][0] < min_y) {
@@ -193,7 +216,7 @@ Page {
                                             canvas.height - ((i - min_i) / diff_y ) * canvas.height,
                                             canvas.width,
                                             canvas.height - ((i - min_i) / diff_y ) * canvas.height);
-                            max_txt = Math.max(ctx.measureText(i + " W ").width, max_txt);
+                            max_txt = Math.max(ctx.measureText(i + (consumption.show_long_term ? " Wh " : " W ")).width, max_txt);
                         }
                         canvas.drawLine(ctx,   canvas.width/3, 0,   canvas.width/3, canvas.height);
                         canvas.drawLine(ctx, 2*canvas.width/3, 0, 2*canvas.width/3, canvas.height);
@@ -217,7 +240,7 @@ Page {
                                 ctx.strokeStyle = Theme.secondaryColor;
                                 ctx.fillStyle = Theme.secondaryColor;
                             }
-                            var txt = i + " W";
+                            var txt = i + (consumption.show_long_term ? " Wh" : " W");
                             ctx.fillText(txt, 0, canvas.height - ((i - min_i) / diff_y ) * canvas.height - px / 4);
                             ctx.fillText(txt, canvas.width - ctx.measureText(txt).width, canvas.height - ((i - min_i) / diff_y ) * canvas.height - px / 4);
                         }
