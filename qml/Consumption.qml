@@ -57,7 +57,7 @@ Page {
         PushUpMenu {
             MenuItem {
                 text: show_long_term ? qsTr("Short term graph") : qsTr("Long term graph")
-                onClicked: { canvas.clear(canvas.getContext("2d")); show_long_term = !show_long_term; consumption.refresh(); }
+                onClicked: { canvas.clear(canvas.getContext("2d")); show_long_term = !show_long_term; if(show_long_term) last_long_refresh = 0; consumption.refresh(); }
             }
         }
 
