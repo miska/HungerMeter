@@ -240,7 +240,7 @@ Page {
                                     tmp_dat.setMinutes(tmp_dat.getMinutes()+1);
                                 }
                                 tmp_dat.setSeconds(0);
-                                if(diff>=3600*24) {
+                                if(diff>=2*3600*24) {
                                     if(tmp_dat.getMinutes()>30) {
                                         tmp_dat.setHours(tmp_dat.getHours()+1);
                                     }
@@ -304,7 +304,7 @@ Page {
                             var dte = new Date(in_dte*1000);
                             var dow = [ qsTr("Sun"), qsTr("Mon"), qsTr("Tue"), qsTr("Wed"), qsTr("Thu"), qsTr("Fri"), qsTr("Sat")];
                             var ret = "";
-                            if(diff < 3600*24) {
+                            if(diff < 2*3600*24) {
                                var tmp;
                                tmp = dte.getMinutes();
                                tmp = ((tmp<10)?("0"+tmp):tmp);
