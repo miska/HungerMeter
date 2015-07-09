@@ -73,12 +73,13 @@ Page {
 
                     menu: ContextMenu {
                         id: shortMenu
-                        property var short_values: [1, 2, 3, 5];
+                        property var short_values: [1, 2, 3, 5, 10];
                         onActivated: { app.cur_time = short_values[index]; settings.setValue("cur_time", short_values[index]); }
                         MenuItem { text: "" + shortMenu.short_values[0] + " s"; }
                         MenuItem { text: "" + shortMenu.short_values[1] + " s"; }
                         MenuItem { text: "" + shortMenu.short_values[2] + " s"; }
                         MenuItem { text: "" + shortMenu.short_values[3] + " s"; }
+                        MenuItem { text: "" + shortMenu.short_values[4] + " s"; }
                     }
                 }
             }
@@ -92,7 +93,7 @@ Page {
 
                     menu: ContextMenu {
                         id: avgMenu
-                        property var avg_values: [10, 20, 30, 40, 50, 60];
+                        property var avg_values: [10, 20, 30, 40, 50, 60, 120];
                         onActivated: { app.avg_time = avg_values[index]; settings.setValue("avg_time", avg_values[index]); }
                         MenuItem { text: "" + avgMenu.avg_values[0] + " s"; }
                         MenuItem { text: "" + avgMenu.avg_values[1] + " s"; }
@@ -100,6 +101,7 @@ Page {
                         MenuItem { text: "" + avgMenu.avg_values[3] + " s"; }
                         MenuItem { text: "" + avgMenu.avg_values[4] + " s"; }
                         MenuItem { text: "" + avgMenu.avg_values[5] + " s"; }
+                        MenuItem { text: "" + avgMenu.avg_values[6] + " s"; }
                     }
                 }
             }
