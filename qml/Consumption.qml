@@ -31,10 +31,10 @@ Page {
         longText.text = hunger.long_text();
         pageTimer.interval = app.cur_time * 1000;
         var now_t = Math.round(Date.now()/300000);
-        if(!show_long_term || last_long_refresh < now_t || array.length < 2) {
+        if(!show_long_term || last_long_refresh < now_t || !canvas.array || canvas.array.length < 2) {
             canvas.array = show_long_term ? hunger.long_graph(app.long_avg * 3600) : hunger.graph(app.avg_time);
             canvas.requestPaint();
-            if(show_long_term)
+            if(show_long_term && canvas.array && canvas.array.length > 1)
                 last_long_refresh = now_t;
         }
     }
@@ -154,7 +154,7 @@ Page {
                         ctx.font = "" + px + "px Monospace";
 
                         // Error out early
-                        if(array.length < 2) {
+                        if(!array || array.length < 2) {
                             ctx.font = "" + (px + 2) + "px Monospace";
                             ctx.strokeStyle = Theme.secondaryColor;
                             ctx.fillStyle = Theme.secondaryColor;
