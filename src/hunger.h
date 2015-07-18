@@ -37,6 +37,8 @@ struct history {
     time_t time;
 };
 
+void save_data();
+
 long get_bat_cur();
 
 long get_bat_full();
@@ -53,8 +55,6 @@ int get_long_avg();
 
 long get_power();
 
-void hunger_long_iter();
-
 QVariantList get_long_graph_data();
 
 class Hunger : public QObject{
@@ -66,7 +66,7 @@ public:
     explicit Hunger(QObject* parent = 0) : QObject(parent) {}
     ~Hunger() {}
     Q_INVOKABLE void refresh(int limit);
-    Q_INVOKABLE void long_iter() { hunger_long_iter(); }
+    Q_INVOKABLE void long_iter() { save_data(); }
     Q_INVOKABLE QString avg_text(int number);
     Q_INVOKABLE long avg_val(int number);
     Q_INVOKABLE QString long_text();
