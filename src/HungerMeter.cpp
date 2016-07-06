@@ -23,6 +23,7 @@
 #include <QVariantList>
 #include <QObject>
 #include <QSettings>
+#include <QtSql/QtSql>
 #include <sailfishapp.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -213,7 +214,7 @@ QVariantList Hunger::graph(int limit) {
     return ret;
 }
 
-QVariantList Hunger::long_graph(int limit) {
+QVariantList Hunger::long_graph(int) {
     return get_long_graph_data();
 }
 
@@ -228,9 +229,16 @@ QVariant Settings::value(const QString &key, const QVariant &defaultValue) const
 }
 
 Q_DECL_EXPORT int main(int argc, char *argv[]) {
-    qmlRegisterType<Hunger>("harbour.hungermeter.hunger", 1, 0, "Hunger");
-    qmlRegisterType<Settings>("harbour.hungermeter.settings", 1, 0, "Settings");
-
-    return SailfishApp::main(argc, argv);
+    int ret = 0;
+    if(argc == 2 && (strcmp(argv[1], "update") ==0)) {
+        QCoreApplication app(argc, argv);
+        save_data();
+        QSqlDatabase::database().close();
+    } else {
+        qmlRegisterType<Hunger>("harbour.hungermeter.hunger", 1, 0, "Hunger");
+        qmlRegisterType<Settings>("harbour.hungermeter.settings", 1, 0, "Settings");
+        ret = SailfishApp::main(argc, argv);
+    }
+    return ret;
 }
 

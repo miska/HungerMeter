@@ -39,6 +39,8 @@ struct history {
 
 void save_data();
 
+void close_db();
+
 long get_bat_cur();
 
 long get_bat_full();
