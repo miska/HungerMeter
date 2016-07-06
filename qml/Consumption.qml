@@ -32,13 +32,16 @@ Page {
         pageTimer.interval = app.cur_time * 1000;
         var now_t = Math.round(Date.now()/300000);
         if(!show_long_term || last_long_refresh < now_t || !canvas.array || canvas.array.length < 2) {
+            loading = true;
             canvas.array = show_long_term ? hunger.long_graph(app.long_avg * 3600) : hunger.graph(app.avg_time);
+            loading = false;
             canvas.requestPaint();
             if(show_long_term && canvas.array && canvas.array.length > 1)
                 last_long_refresh = now_t;
         }
     }
     property var show_long_term: false;
+    property var loading: true;
     property var last_long_refresh: 0;
     onApplicationActiveChanged: { if(applicationActive) { consumption.refresh(); } }
     onStatusChanged: { if((status == PageStatus.Active) && (!app.battery)) { pageStack.pushAttached(Qt.resolvedUrl("Battery.qml")); } }
@@ -57,7 +60,7 @@ Page {
         PushUpMenu {
             MenuItem {
                 text: show_long_term ? qsTr("Short term graph") : qsTr("Long term graph")
-                onClicked: { canvas.clear(canvas.getContext("2d")); show_long_term = !show_long_term; if(show_long_term) last_long_refresh = 0; consumption.refresh(); }
+                onClicked: { consumption.loading = true; canvas.clear(canvas.getContext("2d")); canvas.requestPaint(); show_long_term = !show_long_term; if(show_long_term) last_long_refresh = 0; consumption.refresh(); }
             }
         }
 
@@ -158,7 +161,7 @@ Page {
                             ctx.font = "" + (px + 2) + "px Monospace";
                             ctx.strokeStyle = Theme.secondaryColor;
                             ctx.fillStyle = Theme.secondaryColor;
-                            var txt = qsTr("No data available!!!");
+                            var txt = qsTr(consumption.loading ? "Loading..." : "No data available!!!");
                             ctx.fillText(txt, (canvas.width - ctx.measureText(txt).width)/2, canvas.height/2 - px);
                             ctx.restore();
                             return;
