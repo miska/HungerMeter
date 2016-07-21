@@ -70,7 +70,7 @@ Page {
                 x: parent.spacing
                 Label {
                     text: qsTr("Full: ")
-                    width: parent.width - curText.width - (3 * parent.spacing) - 1
+                    width: parent.width - fullText.width - (3 * parent.spacing) - 1
                     font.pixelSize: Theme.fontSizeLarge
                 }
                 Label {

@@ -13,8 +13,8 @@ Name:       harbour-hungermeter
 %{!?qtc_make:%define qtc_make make}
 %{?qtc_builddir:%define _builddir %qtc_builddir}
 Summary:    Hunger Meter
-Version:    4.0.1
-Release:    1
+Version:    4.1.0
+Release:    0
 Group:      Qt/Qt
 License:    GPL-3.0
 URL:        http://example.org/

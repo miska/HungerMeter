@@ -31,6 +31,18 @@
 
 #include "hunger.h"
 
+Settings::Settings(QObject *parent): QObject(parent) {}
+
+void Settings::setValue(const QString & key, const QVariant & value) {
+    if(key == "use_fallback")
+        fallback = value.toInt() > 0;
+    settings_.setValue(key, value);
+}
+
+QVariant Settings::value(const QString &key, const QVariant &defaultValue) const {
+    return settings_.value(key, defaultValue);
+}
+
 QString format_str(long ret, const char* unit = "mW") {
     static char buff[16];
     if(ret == ERR_VAL) {
@@ -130,6 +142,14 @@ float Hunger::bat_cur_pr_val() {
     }
 }
 
+bool Hunger::fallback_available() {
+    if(get_data("energy_full") != ERR_VAL && get_data("capacity") != ERR_VAL) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 QString Hunger::bat_cur_pr() {
     char buff[16];
     float pr = bat_cur_pr_val();
@@ -216,16 +236,6 @@ QVariantList Hunger::graph(int limit) {
 
 QVariantList Hunger::long_graph(int) {
     return get_long_graph_data();
-}
-
-Settings::Settings(QObject *parent): QObject(parent) {}
-
-void Settings::setValue(const QString & key, const QVariant & value) {
-    settings_.setValue(key, value);
-}
-
-QVariant Settings::value(const QString &key, const QVariant &defaultValue) const {
-    return settings_.value(key, defaultValue);
 }
 
 Q_DECL_EXPORT int main(int argc, char *argv[]) {

@@ -50,6 +50,7 @@ Page {
         showInterval.checked = settings.value("show_int", 1) > 0;
         persistent.checked = settings.value("persistent", 0) > 0;
         battery_first.checked = settings.value("battery_first", 0) > 0;
+        use_fallback.checked = settings.value("use_fallback", 0) > 0;
     }
     SilicaFlickable {
         anchors.fill: parent
@@ -189,6 +190,13 @@ Page {
                     settings.setValue("battery_first", checked?1:0);
                 }
             }
+/*            TextSwitch {
+                id: fallback_mode
+                text: qsTr("Use fallback mode")
+                onCheckedChanged: {
+                    settings.setValue("fallback", checked?1:0);
+                }
+            } */
         }
     }
 }

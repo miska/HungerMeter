@@ -24,9 +24,11 @@
 #include <dirent.h>
 #include <QString>
 #include <QDir>
+#include <QDebug>
 #include <stdio.h>
 
 QString bat_path;
+bool fallback = false;
 
 void init_bat_path() {
    if(!bat_path.isEmpty()) return;
@@ -36,14 +38,14 @@ void init_bat_path() {
    foreach(QString entry, pdir.entryList()) {
       dir = pdir;
       dir.cd(entry);
-      if(dir.exists("energy_now")) {
+      if(dir.exists("energy_now") || dir.exists("charge_now") || dir.exists("capacity")) {
          bat_path = dir.absolutePath();
          return;
       }
    }
 }
 
-long get_data(QString file) {
+long get_data(QString file, bool micro) {
    FILE *F;
    long ret = ERR_VAL;
    init_bat_path();
@@ -55,15 +57,60 @@ long get_data(QString file) {
    } else {
        return ERR_VAL;
    }
-   return ret/1000;
+   if(micro) {
+       return ret / 1000;
+   } else {
+       return ret;
+   }
+}
+
+long get_bat_full() {
+   static long ret = ERR_VAL;
+   if(ret != ERR_VAL && ret != 0)
+      return ret;
+   ret = get_data("energy_full");
+   if(ret == ERR_VAL) {
+      // Ugly hack for JollaC
+      FILE *F;
+      F = fopen("/sys/class/power_supply/bms/battery_type","r");
+      if(F == NULL)
+          return ERR_VAL;
+      char buff[256];
+      memset(buff, 0, sizeof(char) * 256);
+      fgets(buff, 255, F);
+      fclose(F);
+      if(strstr(buff,"qrd_skue_4v35_2500mah") != NULL) {
+          return 435 * 25;
+      } else {
+          return ERR_VAL;
+      }
+   }
+   if(ret > 200000)
+      ret = ret / 1000;
+   return ret;
 }
 
 long get_bat_cur() {
-   return get_data("energy_now");
+   long ret = get_data("energy_now");
+   if(ret == ERR_VAL) {
+      long tmp;
+      if(!fallback &&
+         ((ret = get_data("charge_now")) != ERR_VAL) &&
+         ((tmp = get_data("voltage_now")) != ERR_VAL)) {
+         ret = ret * (tmp / 1000);
+      } else {
+         ret = get_bat_full();
+         tmp = get_data("capacity", false);
+         if(ret == ERR_VAL || tmp == ERR_VAL)
+            return ERR_VAL;
+         ret = (ret * tmp) / 100;
+      }
+   }
+   return ret;
 }
 
 long get_uptime() {
-    long ret=0;
+    long ret=ERR_VAL;
     char tmp='0';
     FILE* F;
 
@@ -75,10 +122,6 @@ long get_uptime() {
         fclose(F);
     }
     return ret;
-}
-
-long get_bat_full() {
-   return get_data("energy_full");
 }
 
 long get_u() {

@@ -32,6 +32,8 @@
 
 #define ERR_VAL -99999
 
+extern bool fallback;
+
 struct history {
     int data;
     time_t time;
@@ -46,6 +48,8 @@ long get_bat_cur();
 long get_bat_full();
 
 long get_u();
+
+long get_data(QString file, bool micro = true);
 
 long get_i();
 
@@ -76,6 +80,7 @@ public:
     Q_INVOKABLE QString bat_cur_pr();
     Q_INVOKABLE float bat_cur_pr_val();
     Q_INVOKABLE int charging();
+    Q_INVOKABLE bool fallback_available();
     Q_INVOKABLE QString bat_full();
     Q_INVOKABLE QString tme_left();
     Q_INVOKABLE QString tme_left_short();
